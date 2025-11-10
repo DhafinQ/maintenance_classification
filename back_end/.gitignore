@@ -20,9 +20,9 @@ env/
 *.sqlite3
 
 # Model artifacts
-models/pkl/
-*.pkl
-*.joblib
+# models/pkl/
+# *.pkl
+# *.joblib
 
 # Jupyter notebook checkpoints
 .ipynb_checkpoints
