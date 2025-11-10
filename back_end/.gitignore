@@ -1,0 +1,59 @@
+# ===========================
+# PYTHON / FASTAPI PROJECT
+# ===========================
+
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Database files (jika pakai SQLite)
+*.db
+*.sqlite3
+
+# Model artifacts
+models/pkl/
+*.pkl
+*.joblib
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints
+
+# Logs
+*.log
+
+# Alembic migration cache
+migrations/versions/__pycache__/
+migrations/__pycache__/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# Node (jika ada frontend dalam 1 repo)
+node_modules/
+dist/
+build/
+
+# Cache & Temp
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/

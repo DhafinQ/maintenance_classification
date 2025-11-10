@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+alembic
+python-dotenv
+scikit-learn
+joblib
+pandas
+numpy
+python-jose[cryptography]
+passlib[bcrypt]
+pytest
+httpx
+black
+isort
+flake8
