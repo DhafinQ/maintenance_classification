@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
-# from schemas.predict_schema import PredictRequest, PredictResponse
-# from services.ml_service import predict_failure
+from fastapi.middleware.cors import CORSMiddleware
 from routes.init import api_router
 
 app = FastAPI(
@@ -9,20 +8,19 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# === Tambahkan Middleware CORS ===
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React frontend
+    allow_credentials=True,
+    allow_methods=["*"],  # izinkan semua method (GET, POST, PUT, DELETE, dll)
+    allow_headers=["*"],  # izinkan semua header
+)
+
+# === Register semua route dari folder routes ===
 app.include_router(api_router)
 
+# === Route utama untuk tes ===
+@app.get("/")
 def root():
     return {"message": "Welcome to Machine Maintenance API!"}
-# @app.get("/health")
-# def health_check():
-#     return {"status": "OK"}
-
-# @app.post("/predict", response_model=PredictResponse)
-# def predict_endpoint(request: PredictRequest):
-#     try:
-#         result = predict_failure(request.dict())
-#         return PredictResponse(**result)
-#     except ValueError as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-#     except Exception as e:
-#         raise HTTPException(status_code=400, detail=f"Terjadi kesalahan: {e}")
