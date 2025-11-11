@@ -25,3 +25,21 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+
+@router.put("/{product_id}")
+def update_product(product_id: int, product_name: str, db: Session = Depends(get_db)):
+    product = db.query(Production).filter(Production.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    product.product_name = product_name
+    db.commit()
+    db.refresh(product)
+    return {"message": "Product updated successfully", "data": product}
+
+def delete_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Production).filter(Production.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    db.delete(product)
+    db.commit()
+    return {"message": f"Product with ID {product_id} deleted successfully"}

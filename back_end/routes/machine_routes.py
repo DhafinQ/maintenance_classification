@@ -26,3 +26,22 @@ def get_machine(machine_id: int, db: Session = Depends(get_db)):
     if not machine:
         raise HTTPException(status_code=404, detail="Machine not found")
     return machine
+
+@router.put("/{machine_id}")
+def update_machine(machine_id: int, type: str, db: Session = Depends(get_db)):
+    machine = db.query(Machine).filter(Machine.id == machine_id).first()
+    if not machine:
+        raise HTTPException(status_code=404, detail="Machine not found")
+    machine.type = type
+    db.commit()
+    db.refresh(machine)
+    return {"message": "Machine updated successfully", "data": machine}
+
+@router.delete("/{machine_id}")
+def delete_machine(machine_id: int, db: Session = Depends(get_db)):
+    machine = db.query(Machine).filter(Machine.id == machine_id).first()
+    if not machine:
+        raise HTTPException(status_code=404, detail="Machine not found")
+    db.delete(machine)
+    db.commit()
+    return {"message": f"Machine with ID {machine_id} deleted successfully"}
