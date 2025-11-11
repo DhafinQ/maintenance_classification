@@ -30,8 +30,8 @@ except FileNotFoundError:
 
 # Type 0 = High, 1 = Low 2 = Med 
 column_map = {
-    "Air_temperature_K": "Air_Temp_K",
-    "Process_temperature_K": "Process_Temp_K",
+    "Air_temperature_C": "Air_Temp_K",
+    "Process_temperature_C": "Process_Temp_K",
     "Rotational_speed_rpm": "Rot_Speed_RPM",
     "Torque_Nm": "Torque_Nm",
     "Tool_wear_min": "Tool_Wear_min"
@@ -39,8 +39,8 @@ column_map = {
 # --- Schema Input ---
 class MachineData(BaseModel):
     Type : float
-    Air_temperature_K: float
-    Process_temperature_K: float
+    Air_temperature_C: float
+    Process_temperature_C: float
     Torque_Nm: float
     Rotational_speed_rpm: float
     Tool_wear_min: float
@@ -55,8 +55,8 @@ def predict(data: MachineData):
     # Convert ke DataFrame
     df = pd.DataFrame([{
         "Type": data.Type,
-        column_map["Air_temperature_K"]: data.Air_temperature_K,
-        column_map["Process_temperature_K"]: data.Process_temperature_K,
+        column_map["Air_temperature_C"]: data.Air_temperature_C + 273.15,
+        column_map["Process_temperature_C"]: data.Process_temperature_C + 273.15,
         column_map["Rotational_speed_rpm"]: data.Rotational_speed_rpm,
         column_map["Torque_Nm"]: data.Torque_Nm,
         column_map["Tool_wear_min"]: data.Tool_wear_min,
