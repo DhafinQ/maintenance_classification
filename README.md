@@ -301,13 +301,6 @@ Nilai ini digunakan sebagai input tambahan ke model ML.
 
 ---
 
-## 🧑‍💻 Pengembang
-
-* **Dhafin Qinthara**
-  Industrial Informatics Engineering – Politeknik Manufaktur Bandung
-  Proyek Akhir Praktikum *Machine Learning Dasar (Praktikum)*
-
----
 
 ## 📜 Lisensi
 
