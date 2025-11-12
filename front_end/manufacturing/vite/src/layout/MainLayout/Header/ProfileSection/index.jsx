@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
-// Card, CardContent TIDAK DIPAKAI lagi setelah penghapusan
 import Chip from '@mui/material/Chip';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Divider from '@mui/material/Divider';
@@ -19,19 +18,17 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import Stack from '@mui/material/Stack';
-// Switch TIDAK DIPAKAI lagi setelah penghapusan
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 // project imports
-// UpgradePlanCard TIDAK DIPAKAI lagi
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import useConfig from 'hooks/useConfig';
 
 // assets
 import User1 from 'assets/images/users/user-round.svg';
-import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons-react';
+import { IconLogout, IconSearch, IconSettings } from '@tabler/icons-react'; // IconUser dihapus
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -62,10 +59,7 @@ export default function ProfileSection() {
         state: { borderRadius }
     } = useConfig();
 
-    // 💡 PERUBAHAN: Hapus state sdm dan notification yang tidak dipakai
-    // const [sdm, setSdm] = useState(true);
     const [value, setValue] = useState('');
-    // const [notification, setNotification] = useState(false);
     const [open, setOpen] = useState(false);
     
     // 💡 PERUBAHAN: State untuk menyimpan nama pengguna
@@ -194,26 +188,6 @@ export default function ProfileSection() {
                                                 '&::-webkit-scrollbar': { width: 5 }
                                             }}
                                         >
-                                            {/* ❌ PENGHAPUSAN: UpgradePlanCard */}
-                                            {/* <UpgradePlanCard /> */}
-                                            {/* <Divider /> */} 
-                                            
-                                            {/* ❌ PENGHAPUSAN: DND Mode Card */}
-                                            {/* <Card sx={{ bgcolor: 'primary.light', my: 2 }}>
-                                                <CardContent>
-                                                    <Stack sx={{ gap: 3 }}>
-                                                        <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                                                            <Typography variant="subtitle1">Start DND Mode</Typography>
-                                                            <Switch color="primary" checked={sdm} onChange={(e) => setSdm(e.target.checked)} name="sdm" size="small" />
-                                                        </Stack>
-                                                        <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                                                            <Typography variant="subtitle1">Allow Notifications</Typography>
-                                                            <Switch checked={notification} onChange={(e) => setNotification(e.target.checked)} name="sdm" size="small" />
-                                                        </Stack>
-                                                    </Stack>
-                                                </CardContent>
-                                            </Card> */}
-                                            
                                             <Divider />
                                             <List
                                                 component="nav"
@@ -231,7 +205,9 @@ export default function ProfileSection() {
                                                     </ListItemIcon>
                                                     <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
                                                 </ListItemButton>
-                                                <ListItemButton sx={{ borderRadius: `${borderRadius}px` }}>
+                                                
+                                                {/* ❌ PENGHAPUSAN: Bagian Social Profile */}
+                                                {/* <ListItemButton sx={{ borderRadius: `${borderRadius}px` }}>
                                                     <ListItemIcon>
                                                         <IconUser stroke={1.5} size="20px" />
                                                     </ListItemIcon>
@@ -251,7 +227,9 @@ export default function ProfileSection() {
                                                             </Stack>
                                                         }
                                                     />
-                                                </ListItemButton>
+                                                </ListItemButton> 
+                                                */}
+
                                                 {/* LIST ITEM LOGOUT */}
                                                 <ListItemButton 
                                                     sx={{ borderRadius: `${borderRadius}px` }}

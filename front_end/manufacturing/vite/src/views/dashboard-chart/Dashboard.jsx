@@ -1,12 +1,13 @@
 // src/Views/dashboard-chart/Dashboard.jsx
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react'; // Tambahkan useCallback
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+// Asumsi components ini ada di path yang sama atau sudah dikonfigurasi
 import PredictionCard from './PredictionCard';
 import PredictionChart from './PredictionChart';
 import ConfidenceChart from './ConfidenceChart';
-import './Dashboard.css'; 
+import './Dashboard.css';
 
 const PREDICT_API_URL = 'http://127.0.0.1:8000/predict/';
 
@@ -24,41 +25,55 @@ export default function Dashboard() {
     const [isLoading, setLoading] = useState(true);
     const [predictData, setPredictData] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const token = localStorage.getItem('accessToken');
-            
-            if (!token) {
-                setLoading(false);
-                navigate('/pages/login', { replace: true }); 
+    // Fungsi untuk mengambil data dari API (dibuat dengan useCallback agar stabil)
+    const fetchData = useCallback(async () => {
+        const token = localStorage.getItem('accessToken');
+
+        // Cek Autentikasi
+        if (!token) {
+            setLoading(false);
+            navigate('/pages/login', { replace: true });
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // 🔑 Mengirim Token untuk membedakan data antar pengguna
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            const response = await axios.get(PREDICT_API_URL, config);
+            setPredictData(response.data);
+        } catch (error) {
+            // Handle token kedaluwarsa atau tidak valid
+            if (error.response && error.response.status === 401) {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('username'); // Hapus data user juga
+                navigate('/pages/login', { replace: true });
                 return;
             }
 
-            setLoading(true);
-            try {
-                const config = {
-                    headers: {
-                        'Authorization': `Bearer ${token}` 
-                    }
-                };
+            // Gunakan mock data jika API gagal (misalnya, server down)
+            console.error("Failed to fetch data, using mock data:", error);
+            setPredictData(MOCK_PREDICT_DATA);
+        } finally {
+            setLoading(false);
+        }
+    }, [navigate]); // navigate sebagai dependency
 
-                const response = await axios.get(PREDICT_API_URL, config);
-                setPredictData(response.data);
-            } catch (error) {
-                if (error.response && error.response.status === 401) {
-                    localStorage.removeItem('accessToken');
-                    navigate('/pages/login', { replace: true });
-                    return; 
-                }
-
-                // Gunakan mock data jika API gagal
-                setPredictData(MOCK_PREDICT_DATA);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Efek untuk memanggil fetchData saat komponen dimuat
+    useEffect(() => {
         fetchData();
-    }, [navigate]);
+    }, [fetchData]);
+
+    // --- Penambahan: Fungsi Reset Data ---
+    const handleResetData = () => {
+        setPredictData(MOCK_PREDICT_DATA);
+        console.log("Data prediksi telah direset ke nilai awal.");
+    };
 
     const predictions = predictData?.predictions || MOCK_PREDICT_DATA.predictions;
     const summary = predictData?.summary || MOCK_PREDICT_DATA.summary;
@@ -67,26 +82,45 @@ export default function Dashboard() {
         summary.final_decision === "1"
             ? "Rusak"
             : summary.final_decision === "0"
-            ? "Tidak Rusak"
-            : "N/A";
+                ? "Tidak Rusak"
+                : "N/A";
 
     const finalDecisionClass =
         summary.final_decision === "1"
             ? "error"
             : summary.final_decision === "0"
-            ? "success"
-            : "neutral";
-    
-    // Variabel confidenceData dihapus karena tidak digunakan lagi
-    
+                ? "success"
+                : "neutral";
+
     return (
-        <div className="dashboard-container main-card"> 
-            
-            <h2 className="dashboard-title title">Machine Fault Prediction Dashboard</h2> 
+        <div className="dashboard-container main-card">
+
+            <h2 className="dashboard-title title">Machine Fault Prediction Dashboard</h2>
+
+            {/* Tombol Reset Data dan Tombol Muat Ulang (Opsional) */}
+            <div className="dashboard-controls">
+                <button 
+                    onClick={handleResetData} 
+                    className="btn btn-warning" 
+                    disabled={isLoading}
+                >
+                    Reset Data (Mock)
+                </button>
+                <button 
+                    onClick={fetchData} 
+                    className="btn btn-primary" 
+                    disabled={isLoading}
+                >
+                    Fetch Latest Data
+                </button>
+            </div>
+
+            <hr className="separator" /> {/* Pemisah visual */}
+
 
             {isLoading || !predictData ? (
                 <div className="loading-state">
-                    <div className="spinner"></div> 
+                    <div className="spinner"></div>
                     <p>Fetching prediction data...</p>
                 </div>
             ) : (
@@ -105,6 +139,7 @@ export default function Dashboard() {
                         />
                         <PredictionCard
                             title="XGBoost"
+                            titleClass="small-title"
                             value={`${(predictions["XGBoost"]?.confidence * 100).toFixed(2)}%`}
                             subtitle="Confidence"
                         />
@@ -119,11 +154,9 @@ export default function Dashboard() {
                     {/* --- Grid Chart Bawah (Chart Ukuran Baru) --- */}
                     <div className="grid-row grid-chart-layout-revised">
                         <div className="chart-item chart-main-focus">
-                            {/* Prediction Chart - Menggunakan predictData sebagai prop */}
-                            <PredictionChart predictData={predictData} /> 
+                            <PredictionChart predictData={predictData} />
                         </div>
                         <div className="chart-item chart-side-focus-revised">
-                            {/* Confidence Chart */}
                             <ConfidenceChart predictData={predictData} />
                         </div>
                     </div>

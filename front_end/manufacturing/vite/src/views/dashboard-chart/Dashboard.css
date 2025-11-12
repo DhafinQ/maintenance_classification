@@ -14,7 +14,7 @@
 /* .dashboard-container kini memegang style card utama */
 .dashboard-container.main-card {
     /* Background di luar card, jika ada */
-    background-color: var(--bg-light); 
+    background-color: var(--bg-light);
     min-height: 100vh;
     padding: 40px 0;
     box-sizing: border-box;
@@ -30,13 +30,66 @@
 
 /* --- Typography --- */
 /* Menggunakan kelas 'title' seperti referensi */
-.dashboard-title.title { 
+.dashboard-title.title {
     text-align: center;
     margin-bottom: 30px;
     color: var(--text-dark);
     font-weight: 700;
     font-size: 2rem;
     letter-spacing: 0.5px;
+}
+
+/* --- Dashboard Controls & Buttons (REVISI FINAL) --- */
+
+/* Kontainer untuk menampung tombol */
+.dashboard-controls {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 15px; 
+    margin-bottom: 25px; 
+    justify-content: flex-start;
+}
+
+/* Base style untuk semua tombol */
+.btn {
+    padding: 10px 18px;
+    border-radius: 8px; 
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: none; /* Menghilangkan shadow untuk tampilan outline */
+    white-space: nowrap; 
+    
+    /* Gaya Outline yang seragam untuk kedua tombol */
+    background-color: transparent; 
+    color: var(--primary-color); 
+    border: 2px solid var(--primary-color); /* Border ungu tebal */
+}
+
+/* Hover State untuk kedua tombol (.btn-primary dan .btn-warning) */
+.btn:hover:not(:disabled) {
+    background-color: rgba(103, 58, 183, 0.1); /* Latar belakang ungu transparan saat hover */
+    border-color: var(--primary-dark);
+    color: var(--primary-dark);
+}
+
+/* Disabled State */
+.btn:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+    border: 2px solid #aaa; /* Border abu-abu saat disabled */
+}
+
+/* Pemisah Visual (HR) */
+.separator {
+    border: 0;
+    height: 1px;
+    background: #e0e0e0; 
+    margin: 15px 0 30px 0;
 }
 
 /* --- Grid Layout (Flexbox & CSS Grid) --- */
@@ -54,24 +107,24 @@
 
 .grid-4-cols > * {
     /* Setiap card mengambil kurang dari 25% agar ada ruang gap */
-    flex-basis: calc(25% - 15px); 
-    min-width: 150px; 
+    flex-basis: calc(25% - 15px);
+    min-width: 150px;
 }
 
 /* Grid Chart Bawah (Fokus pada Chart Utama) */
-.grid-chart-layout {
+.grid-chart-layout-revised { /* Nama kelas diperbarui sesuai kode JSX */
     align-items: stretch;
 }
 
 .chart-main-focus {
     /* Chart Utama: Mengambil sekitar 65% lebar */
-    flex-basis: 65%; 
+    flex-basis: 65%;
     min-width: 300px;
 }
 
-.chart-side-focus {
+.chart-side-focus-revised { /* Nama kelas diperbarui sesuai kode JSX */
     /* Chart Samping: Mengambil sekitar 35% lebar */
-    flex-basis: calc(35% - 20px); 
+    flex-basis: calc(35% - 20px);
     min-width: 250px;
 }
 
@@ -82,9 +135,9 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     padding: 20px;
     box-sizing: border-box;
-    display: flex; 
-    flex-direction: column; 
-    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 /* --- Alert Card Styling (Untuk Warning API) --- */
@@ -143,13 +196,13 @@
 @media (max-width: 1024px) {
     /* Di layar yang lebih kecil, card menjadi 2 kolom */
     .grid-4-cols > * {
-        flex-basis: calc(50% - 10px); 
+        flex-basis: calc(50% - 10px);
     }
-    
+
     /* Chart kembali menjadi 1 kolom penuh di bawah 1024px */
-    .chart-main-focus, 
-    .chart-side-focus {
-        flex-basis: 100%; 
+    .chart-main-focus,
+    .chart-side-focus-revised {
+        flex-basis: 100%;
     }
 }
 
@@ -160,6 +213,9 @@
     }
     /* Card menjadi 1 kolom penuh di layar mobile */
     .grid-4-cols > * {
-        flex-basis: 100%; 
+        flex-basis: 100%;
+    }
+    .dashboard-controls {
+        justify-content: center; /* Pusatkan tombol di mobile */
     }
 }
