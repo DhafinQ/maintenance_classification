@@ -4,14 +4,11 @@ import { lazy } from 'react';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 
-// dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('Views/dashboard/Default'))); // DIKOREKSI: Views/
-// sample page routing
-const SamplePage = Loadable(lazy(() => import('Views/sample-page'))); // DIKOREKSI: Views/
-// form routing BARU
-const FormPage = Loadable(lazy(() => import('Views/form'))); // DIKOREKSI: Views/
-// prediction chart dashboard routing BARU
-const PredictionChartDashboard = Loadable(lazy(() => import('Views/dashboard-chart/Dashboard'))); // DIKOREKSI: Views/
+// Pastikan semua impor menggunakan path folder yang benar
+const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default'))); 
+const SamplePage = Loadable(lazy(() => import('views/sample-page'))); 
+const FormPage = Loadable(lazy(() => import('views/form'))); 
+const PredictionChartDashboard = Loadable(lazy(() => import('views/dashboard-chart/Dashboard'))); 
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -20,25 +17,26 @@ const MainRoutes = {
     element: <MainLayout />,
     children: [
         {
+            // Root utama aplikasi setelah login: /free/
             path: '/',
-            element: <PredictionChartDashboard />
+            element: <FormPage />
         },
 
-        // --- ROUTE BARU: Prediction Chart Dashboard ---
+        // --- ROUTE: Prediction Chart Dashboard ---
         {
-            path: 'dashboard-chart',
+            path: 'dashboard-chart', // Path: /free/dashboard-chart
             element: <PredictionChartDashboard />
         },
 
         // --- Sample Page Route ---
         {
-            path: 'sample-page',
+            path: 'sample-page', // Path: /free/sample-page
             element: <SamplePage />
         },
 
-        // --- Form Route BARU ---
+        // --- Form Route ---
         {
-            path: 'form-input',
+            path: 'form-input', // Path: /free/form-input
             element: <FormPage />
         }
     ]
