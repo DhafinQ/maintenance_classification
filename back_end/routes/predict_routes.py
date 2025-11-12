@@ -28,6 +28,9 @@ except FileNotFoundError:
         "XGBoost": 0.94
     }
 
+# 🟢 Tambahan: variabel global untuk menyimpan hasil terakhir
+latest_prediction = None
+
 # Type 0 = High, 1 = Low 2 = Med 
 column_map = {
     "Air_temperature_C": "Air_Temp_K",
@@ -36,6 +39,7 @@ column_map = {
     "Torque_Nm": "Torque_Nm",
     "Tool_wear_min": "Tool_Wear_min"
 }
+
 # --- Schema Input ---
 class MachineData(BaseModel):
     Type : float
@@ -49,6 +53,8 @@ class MachineData(BaseModel):
 # --- Endpoint Prediksi dari Input User ---
 @router.post("/")
 def predict(data: MachineData):
+    global latest_prediction  # 🟢 Tambahan: supaya hasil bisa disimpan
+
     if not rf_model:
         raise HTTPException(status_code=500, detail="Models are not loaded or not fitted yet.")
 
@@ -65,7 +71,6 @@ def predict(data: MachineData):
     df["temperature_difference"] = df["Process_Temp_K"] - df["Air_Temp_K"]
     df["Mechanical_Power_W"] = df["Torque_Nm"] * df["Rot_Speed_RPM"] * (2 * np.pi / 60)
 
-
     try:
         # Prediksi dengan tiga model
         preds = {
@@ -77,7 +82,7 @@ def predict(data: MachineData):
         # Cari model dengan confidence tertinggi
         best_model = max(preds.items(), key=lambda x: x[1]["confidence"])
 
-        return {
+        result = {
             "input": data.dict(),
             "predictions": preds,
             "summary": {
@@ -90,10 +95,23 @@ def predict(data: MachineData):
             ]
         }
 
+        # 🟢 Simpan hasil prediksi terakhir
+        latest_prediction = result
+
+        return result
+
     except NotFittedError:
         raise HTTPException(status_code=500, detail="One or more models are not fitted yet. Please retrain.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# --- 🟢 Endpoint baru: ambil hasil prediksi terakhir ---
+@router.get("/")
+def get_latest_prediction():
+    if latest_prediction is None:
+        raise HTTPException(status_code=404, detail="Belum ada hasil prediksi.")
+    return latest_prediction
 
 
 # --- Fungsi pembantu untuk prediksi dan confidence ---

@@ -1,8 +1,8 @@
 // assets
-import { IconDashboard, IconForms, IconLayoutGrid } from '@tabler/icons-react'; // 1. Mengganti IconTable dengan IconLayoutGrid
+import { IconForms, IconLayoutGrid, IconChartBar } from '@tabler/icons-react';
 
-// constant
-const icons = { IconDashboard, IconForms, IconLayoutGrid }; // 2. Memastikan IconLayoutGrid ada di konstanta icons
+// Hapus IconDashboard karena tidak digunakan lagi
+const icons = { IconForms, IconLayoutGrid, IconChartBar };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -11,29 +11,32 @@ const dashboard = {
     title: 'Dashboard',
     type: 'group',
     children: [
+        // --- ITEM UNTUK DASHBOARD CHART PREDIKSI ---
         {
-            id: 'default',
-            title: 'Dashboard',
+            id: 'dashboard-chart',
+            title: 'Prediction Chart',
             type: 'item',
-            url: '/dashboard/default',
-            icon: icons.IconDashboard,
-            breadcrumbs: false
+            url: '/dashboard-chart',
+            icon: icons.IconChartBar,
+            breadcrumbs: true
         },
+
         // --- ITEM UNTUK FORM INPUT ---
         {
             id: 'util-form-input',
             title: 'Input Form',
             type: 'item',
-            url: '/form-input', 
-            icon: icons.IconForms, 
+            url: '/form-input',
+            icon: icons.IconForms,
             breadcrumbs: true
         },
-        // --- ITEM UNTUK SAMPLE PAGE (Icon Layout Grid/Tabel) ---
+
+        // --- ITEM UNTUK SAMPLE PAGE (Tabel) ---
         {
-            id: 'sample-page', 
-            title: 'Table', 
+            id: 'sample-page',
+            title: 'Table',
             type: 'item',
-            url: '/sample-page', 
+            url: '/sample-page',
             icon: icons.IconLayoutGrid,
             breadcrumbs: true
         }
