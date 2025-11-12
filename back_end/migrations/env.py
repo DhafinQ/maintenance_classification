@@ -5,7 +5,6 @@ from sqlalchemy import pool
 
 from alembic import context
 from services.db import Base
-from services.db import engine
 from models.machine import *
 from models.machine_log import *
 from models.production import *

@@ -6,12 +6,9 @@ from services.db import SessionLocal, Base, engine
 from models.machine import Machine
 from models.production import Production
 from models.machine_log import MachineLog
-from models.user import User
 from services.code_generator import generate_machine_code, generate_product_code
 import random
 from datetime import datetime, timedelta
-from services.auth_service import hash_password
-
 
 # 1️⃣ Inisialisasi DB
 Base.metadata.create_all(bind=engine)
@@ -73,15 +70,3 @@ def seed_from_csv(csv_path="datasets/ai4i2020.csv"):
 
 if __name__ == "__main__":
     seed_from_csv()
-    if not session.query(User).filter(User.username == "admin").first():
-        admin = User(
-            username="admin",
-            email="admin@example.com",
-            hashed_password=hash_password("admin123"),
-            # role="admin"
-        )
-        session.add(admin)
-        session.commit()
-        print("✅ Admin user created.")
-    else:
-        print("ℹ️ Admin user already exists.")
