@@ -8,6 +8,7 @@ from services.db import Base
 from models.machine import *
 from models.machine_log import *
 from models.production import *
+from models.user import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

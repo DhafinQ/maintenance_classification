@@ -17,3 +17,4 @@ isort
 flake8
 imbalanced-learn
 xgboost
+python-multipart
