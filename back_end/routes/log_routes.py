@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from sklearn.exceptions import NotFittedError
 from pydantic import BaseModel
-
+from services.token_service import get_current_user
 # === Load Models Once ===
 try:
     logreg_model = joblib.load("models/pkl/logreg_pipeline.pkl")
@@ -77,12 +77,12 @@ class MachineLogCreate(BaseModel):
 
 router = APIRouter(prefix="/logs", tags=["Machine Logs"])
 
-@router.get("/")
+@router.get("/", dependencies=[Depends(get_current_user)])
 def get_all_logs(db: Session = Depends(get_db)):
     return db.query(MachineLog).all()
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(get_current_user)])
 def create_log(
     log_data: MachineLogCreate,
     db: Session = Depends(get_db)
@@ -128,7 +128,7 @@ def create_log(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/{log_id}")
+@router.get("/{log_id}", dependencies=[Depends(get_current_user)])
 def get_log_detail(log_id: int, db: Session = Depends(get_db)):
     if not rf_model:
         raise HTTPException(status_code=500, detail="Models not loaded")
@@ -166,7 +166,7 @@ def get_log_detail(log_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.put("/{log_id}")
+@router.put("/{log_id}", dependencies=[Depends(get_current_user)])
 def re_predict_log(log_id: int, db: Session = Depends(get_db)):
     log = db.query(MachineLog).filter(MachineLog.id == log_id).first()
     if not log:
@@ -192,7 +192,7 @@ def re_predict_log(log_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.delete("/{log_id}")
+@router.delete("/{log_id}", dependencies=[Depends(get_current_user)])
 def delete_log(log_id: int, db: Session = Depends(get_db)):
     log = db.query(MachineLog).filter(MachineLog.id == log_id).first()
     if not log:
