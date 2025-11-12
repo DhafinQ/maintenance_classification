@@ -1,294 +1,222 @@
 // src/views/sample-page/InputForm.jsx
 import React, { useState } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  MenuItem,
-  Button,
-  Alert,
-  CircularProgress,
-  Stack,
-} from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom'; // 🧭 Tambahkan ini
+import { useNavigate } from 'react-router-dom';
+// Import file CSS baru Anda
+import './InputForm.css'; 
 
-// 1. Page wrapper
-const PageWrapper = styled(Box)(({ theme }) => ({
-  minHeight: '100vh',
-  background: '#f8f9fa',
-  padding: theme.spacing(3),
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
-}));
-
-// 2. Content grid
-const ContentGrid = styled(Box)(({ theme }) => ({
-  width: '100%',
-  display: 'grid',
-  gridTemplateColumns: '1fr',
-  gap: theme.spacing(4),
-  alignItems: 'start',
-  padding: theme.spacing(0, 2),
-  [theme.breakpoints.down('md')]: {
-    padding: theme.spacing(0, 2),
-  },
-}));
-
-const FormCard = styled(Card)(({ theme }) => ({
-  borderRadius: 12,
-  boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
-  border: 'none',
-  width: '100%',
-}));
-
-const FormContent = styled(CardContent)(({ theme }) => ({
-  padding: theme.spacing(5),
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  padding: theme.spacing(1.8),
-  borderRadius: 8,
-  fontWeight: 700,
-  fontSize: '1rem',
-  textTransform: 'none',
-  boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
-}));
-
+// === DATA & OPSI ===
 const TypeOptions = [
-  { value: 0, label: 'High Quality (0)' },
-  { value: 1, label: 'Low Quality (1)' },
-  { value: 2, label: 'Medium Quality (2)' },
+  { value: 0, label: 'High Quality (0)' },
+  { value: 1, label: 'Low Quality (1)' },
+  { value: 2, label: 'Medium Quality (2)' },
 ];
 
 const initialFormData = {
-  Type: 0,
-  Air_temperature_C: '',
-  Process_temperature_C: '',
-  Rotational_speed_rpm: '',
-  Torque_Nm: '',
-  Tool_wear_min: '',
+  Type: 0,
+  Air_temperature_C: '',
+  Process_temperature_C: '',
+  Rotational_speed_rpm: '',
+  Torque_Nm: '',
+  Tool_wear_min: '',
 };
 
+// === KOMPONEN UTAMA ===
 export default function InputForm() {
-  const [formData, setFormData] = useState(initialFormData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [predictionResult, setPredictionResult] = useState(null);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate(); // 🧭 Hook untuk redirect
+  // ... (Semua state dan fungsi tetap sama)
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'Type') setFormData((p) => ({ ...p, Type: Number(value) }));
-    else setFormData((p) => ({ ...p, [name]: value }));
-    setPredictionResult(null);
-    setError(null);
-  };
+  const [formData, setFormData] = useState(initialFormData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [predictionResult, setPredictionResult] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const validateAndBuildPayload = () => {
-    const payload = {};
-    for (const key of Object.keys(formData)) {
-      if (key === 'Type') {
-        payload[key] = Number(formData.Type);
-        continue;
-      }
-      const raw = formData[key];
-      if (raw === '' || raw === null || raw === undefined) {
-        throw new Error(`Field "${key}" tidak boleh kosong.`);
-      }
-      const num = parseFloat(raw);
-      if (!Number.isFinite(num)) throw new Error(`Field "${key}" harus berupa angka valid.`);
-      payload[key] = num;
-    }
-    return payload;
-  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'Type') setFormData((p) => ({ ...p, Type: Number(value) }));
+    else setFormData((p) => ({ ...p, [name]: value }));
+    setPredictionResult(null);
+    setError(null);
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setPredictionResult(null);
-    setError(null);
+  const validateAndBuildPayload = () => {
+    const payload = {};
+    for (const key of Object.keys(formData)) {
+      if (key === 'Type') {
+        payload[key] = Number(formData.Type);
+        continue;
+      }
+      const raw = formData[key];
+      if (raw === '' || raw === null || raw === undefined) {
+        throw new Error(`Field "${key.replace(/_/g, ' ')}" tidak boleh kosong.`);
+      }
+      const num = parseFloat(raw);
+      if (!Number.isFinite(num)) throw new Error(`Field "${key.replace(/_/g, ' ')}" harus berupa angka valid.`);
+      payload[key] = num;
+    }
+    return payload;
+  };
 
-    let payload;
-    try {
-      payload = validateAndBuildPayload();
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-      return;
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setPredictionResult(null);
+    setError(null);
 
-    try {
-      const res = await fetch('http://127.0.0.1:8000/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+    let payload;
+    try {
+      payload = validateAndBuildPayload();
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+      return;
+    }
 
-      const text = await res.text();
-      if (!res.ok) throw new Error(`Server error ${res.status}. ${text ? text.slice(0, 200) : ''}`);
+    try {
+      const res = await fetch('http://127.0.0.1:8000/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      let data;
-      try {
-        data = text ? JSON.parse(text) : {};
-      } catch (err) {
-        throw new Error('Response dari server bukan JSON valid.');
-      }
+      const text = await res.text();
+      if (!res.ok) throw new Error(`Server error ${res.status}. ${text ? text.slice(0, 200) : ''}`);
 
-      let finalPrediction;
-      if (typeof data.prediction !== 'undefined') finalPrediction = data.prediction;
-      else if (data.summary?.final_decision) finalPrediction = data.summary.final_decision;
-      else {
-        const candidate = Object.values(data).find(
-          (v) => typeof v === 'number' || (typeof v === 'string' && /^\d+$/.test(v))
-        );
-        finalPrediction = candidate;
-      }
+      let data;
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (err) {
+        throw new Error('Response dari server bukan JSON valid.');
+      }
 
-      if (typeof finalPrediction === 'undefined')
-        throw new Error('Tidak menemukan hasil prediksi pada response server.');
+      let finalPrediction;
+      if (typeof data.prediction !== 'undefined') finalPrediction = data.prediction;
+      else if (data.summary?.final_decision) finalPrediction = data.summary.final_decision;
+      else {
+        const candidate = Object.values(data).find(
+          (v) => typeof v === 'number' || (typeof v === 'string' && /^\d+$/.test(v))
+        );
+        finalPrediction = candidate;
+      }
 
-      setPredictionResult(Number(finalPrediction));
+      if (typeof finalPrediction === 'undefined')
+        throw new Error('Tidak menemukan hasil prediksi pada response server.');
 
-      // ✅ Redirect ke dashboard setelah hasil diterima
-      setTimeout(() => {
-        navigate('/dashboard-chart');
-      }, 500);
+      setPredictionResult(Number(finalPrediction));
 
-    } catch (err) {
-      console.error(err);
-      setError(err.message || 'Terjadi kesalahan saat memproses permintaan.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      // Redirect ke dashboard setelah hasil diterima
+      setTimeout(() => {
+        navigate('/dashboard-chart');
+      }, 500);
 
-  const getPredictionMessage = (prediction) => {
-    if (prediction === 1)
-      return { severity: 'error', text: 'Prediksi: GAGAL (Failure detected)' };
-    return { severity: 'success', text: 'Prediksi: AMAN (No failure)' };
-  };
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Terjadi kesalahan saat memproses permintaan.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  return (
-    <PageWrapper>
-      <ContentGrid>
-        <FormCard>
-          <FormContent>
-            <Box sx={{ mb: 4, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: '#1976d2', mb: 0.5 }}>
-                Input Data Mesin
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Masukkan nilai pengukuran untuk mendapatkan prediksi kondisi mesin secara real-time
-              </Typography>
-            </Box>
+  const getPredictionMessage = (prediction) => {
+    if (prediction === 1)
+      return { severity: 'error', text: 'Prediksi: GAGAL (Failure detected)' };
+    return { severity: 'success', text: 'Prediksi: AMAN (No failure)' };
+  };
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-              <Stack spacing={2.5}>
-                {predictionResult !== null && (
-                  <Alert severity={getPredictionMessage(predictionResult).severity}>
-                    {getPredictionMessage(predictionResult).text}
-                  </Alert>
-                )}
+  // Helper untuk membuat label
+  const createLabel = (name) => {
+    // Mengubah "Air_temperature_C" menjadi "Air Temperature (°C)"
+    if (name.includes('_C')) {
+        name = name.replace('_C', ' (°C)');
+    }
+    if (name.includes('_rpm')) {
+        name = name.replace('_rpm', ' (rpm)');
+    }
+    if (name.includes('_Nm')) {
+        name = name.replace('_Nm', ' (Nm)');
+    }
+    if (name.includes('_min')) {
+        name = name.replace('_min', ' (min)');
+    }
+    return name.replace(/_/g, ' ');
+  };
 
-                {error && <Alert severity="warning">{error}</Alert>}
 
-                <TextField
-                  select
-                  fullWidth
-                  label="Type"
-                  name="Type"
-                  value={formData.Type}
-                  onChange={handleChange}
-                  variant="outlined"
-                  size="medium"
-                >
-                  {TypeOptions.map((o) => (
-                    <MenuItem key={o.value} value={o.value}>
-                      {o.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
+  return (
+    <div className="form-card main-card-input"> {/* Menggunakan form-card DAN kelas baru untuk styling container */}
+      <div className="form-content">
+        <div className="form-header">
+          <h2 className="form-title">Input Data Mesin</h2>
+          <p className="form-subtitle">
+            Masukkan nilai pengukuran untuk mendapatkan prediksi kondisi mesin secara real-time
+          </p>
+        </div>
 
-                <TextField
-                  fullWidth
-                  label="Air Temperature (°C)"
-                  name="Air_temperature_C"
-                  value={formData.Air_temperature_C}
-                  onChange={handleChange}
-                  type="number"
-                  inputProps={{ step: '0.01' }}
-                  variant="outlined"
-                  size="medium"
-                />
+        <form onSubmit={handleSubmit} noValidate className="form-stack">
+          {/* Alert Hasil Prediksi */}
+          {predictionResult !== null && (
+            <div className={`alert alert-${getPredictionMessage(predictionResult).severity}`}>
+              {getPredictionMessage(predictionResult).text}
+            </div>
+          )}
 
-                <TextField
-                  fullWidth
-                  label="Process Temperature (°C)"
-                  name="Process_temperature_C"
-                  value={formData.Process_temperature_C}
-                  onChange={handleChange}
-                  type="number"
-                  inputProps={{ step: '0.01' }}
-                  variant="outlined"
-                  size="medium"
-                />
+          {/* Alert Error */}
+          {error && <div className="alert alert-warning">{error}</div>}
 
-                <TextField
-                  fullWidth
-                  label="Rotational Speed (rpm)"
-                  name="Rotational_speed_rpm"
-                  value={formData.Rotational_speed_rpm}
-                  onChange={handleChange}
-                  type="number"
-                  variant="outlined"
-                  size="medium"
-                />
+          {/* Input Type (Dropdown) */}
+          <div className="input-group">
+            <label htmlFor="Type" className="input-label">Type</label>
+            <select
+              id="Type"
+              name="Type"
+              value={formData.Type}
+              onChange={handleChange}
+              className="form-input select-input"
+            >
+              {TypeOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                <TextField
-                  fullWidth
-                  label="Torque (Nm)"
-                  name="Torque_Nm"
-                  value={formData.Torque_Nm}
-                  onChange={handleChange}
-                  type="number"
-                  inputProps={{ step: '0.1' }}
-                  variant="outlined"
-                  size="medium"
-                />
+          {/* Input Lainnya */}
+          {Object.keys(initialFormData).slice(1).map((key) => (
+            <div className="input-group" key={key}>
+              <label htmlFor={key} className="input-label">
+                {createLabel(key)}
+              </label>
+              <input
+                id={key}
+                name={key}
+                value={formData[key]}
+                onChange={handleChange}
+                type="number"
+                step={key === 'Air_temperature_C' || key === 'Process_temperature_C' ? '0.01' : (key === 'Torque_Nm' ? '0.1' : '1')}
+                className="form-input"
+              />
+            </div>
+          ))}
 
-                <TextField
-                  fullWidth
-                  label="Tool Wear (min)"
-                  name="Tool_wear_min"
-                  value={formData.Tool_wear_min}
-                  onChange={handleChange}
-                  type="number"
-                  variant="outlined"
-                  size="medium"
-                />
-
-                <StyledButton
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={isLoading}
-                  endIcon={
-                    isLoading ? <CircularProgress size={18} color="inherit" /> : <SendIcon />
-                  }
-                >
-                  {isLoading ? 'Memproses...' : 'Lakukan Prediksi'}
-                </StyledButton>
-              </Stack>
-            </Box>
-          </FormContent>
-        </FormCard>
-      </ContentGrid>
-    </PageWrapper>
-  );
+          <button
+            type="submit"
+            className={`styled-button ${isLoading ? 'loading' : ''}`}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <span className="spinner"></span>
+                Memproses...
+              </>
+            ) : (
+              <>
+                Lakukan Prediksi
+                <span className="send-icon">→</span>
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }

@@ -2,16 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import { useNavigate } from 'react-router-dom';
 import PredictionCard from './PredictionCard';
 import PredictionChart from './PredictionChart';
 import ConfidenceChart from './ConfidenceChart';
-import { useNavigate } from 'react-router-dom'; // 1. Tambahkan useNavigate untuk Redirect
+import './Dashboard.css'; 
 
 const PREDICT_API_URL = 'http://127.0.0.1:8000/predict/';
 
@@ -25,7 +20,7 @@ const MOCK_PREDICT_DATA = {
 };
 
 export default function Dashboard() {
-    const navigate = useNavigate(); // 2. Inisialisasi useNavigate
+    const navigate = useNavigate();
     const [isLoading, setLoading] = useState(true);
     const [predictData, setPredictData] = useState(null);
 
@@ -33,52 +28,40 @@ export default function Dashboard() {
         const fetchData = async () => {
             const token = localStorage.getItem('accessToken');
             
-            // 3. Cek Token - Jika tidak ada, redirect ke login (meskipun MainLayout sudah punya guard, ini adalah backup)
             if (!token) {
-                console.log("Token not found in Dashboard. Redirecting to login.");
                 setLoading(false);
-                // Redirect ke login, hindari error API
                 navigate('/pages/login', { replace: true }); 
                 return;
             }
 
             setLoading(true);
             try {
-                // 4. Konfigurasi Header dengan Token
                 const config = {
                     headers: {
                         'Authorization': `Bearer ${token}` 
                     }
                 };
 
-                // Mengirim permintaan dengan header Authorization
                 const response = await axios.get(PREDICT_API_URL, config);
                 setPredictData(response.data);
             } catch (error) {
-                console.error("Error fetching prediction data:", error.message);
-                
-                // 5. Tangani Error 401 (Unauthorized/Token Expired)
                 if (error.response && error.response.status === 401) {
-                    console.log("Unauthorized (401). Token might be expired/invalid. Redirecting to login.");
                     localStorage.removeItem('accessToken');
                     navigate('/pages/login', { replace: true });
                     return; 
                 }
 
-                // Tangani error lainnya
-                setPredictData({
-                    ...MOCK_PREDICT_DATA,
-                    error: `API Error: ${error.message}. Data ditampilkan dari Mock (0%).`
-                });
+                // Gunakan mock data jika API gagal
+                setPredictData(MOCK_PREDICT_DATA);
             } finally {
                 setLoading(false);
             }
         };
         fetchData();
-    }, [navigate]); // Tambahkan navigate sebagai dependency useEffect
+    }, [navigate]);
 
-    const predictions = predictData?.predictions || {};
-    const summary = predictData?.summary || {};
+    const predictions = predictData?.predictions || MOCK_PREDICT_DATA.predictions;
+    const summary = predictData?.summary || MOCK_PREDICT_DATA.summary;
 
     const finalDecisionText =
         summary.final_decision === "1"
@@ -87,116 +70,65 @@ export default function Dashboard() {
             ? "Tidak Rusak"
             : "N/A";
 
-    const finalDecisionColor =
+    const finalDecisionClass =
         summary.final_decision === "1"
-            ? "error.main"
+            ? "error"
             : summary.final_decision === "0"
-            ? "success.main"
-            : "text.secondary";
-
+            ? "success"
+            : "neutral";
+    
+    // Variabel confidenceData dihapus karena tidak digunakan lagi
+    
     return (
-        <Box
-            sx={{
-                flexGrow: 1,
-                p: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center", 
-                justifyContent: "center", 
-                minHeight: "50vh", 
-                backgroundColor: "#f9fafb",
-            }}
-        >
-            <Box sx={{ width: "90%", maxWidth: "1200px" }}>
-                <Typography
-                    variant="h4"
-                    gutterBottom
-                    align="center"
-                    sx={{ mb: 4, fontWeight: "bold" }}
-                >
-                    Machine Fault Prediction Dashboard
-                </Typography>
+        <div className="dashboard-container main-card"> 
+            
+            <h2 className="dashboard-title title">Machine Fault Prediction Dashboard</h2> 
 
-                {/* --- Pesan Error Jika Ada --- */}
-                {predictData?.error && (
-                    <Card sx={{ mb: 3, bgcolor: "error.light" }}>
-                        <CardContent>
-                            <Typography variant="h6" color="error.dark">
-                                WARNING: Gagal Koneksi
-                            </Typography>
-                            <Typography color="error.dark">{predictData.error}</Typography>
-                        </CardContent>
-                    </Card>
-                )}
+            {isLoading || !predictData ? (
+                <div className="loading-state">
+                    <div className="spinner"></div> 
+                    <p>Fetching prediction data...</p>
+                </div>
+            ) : (
+                <>
+                    {/* --- Grid Card Atas (4 Card) --- */}
+                    <div className="grid-row grid-4-cols">
+                        <PredictionCard
+                            title="Logistic Regression"
+                            value={`${(predictions["Logistic Regression"]?.confidence * 100).toFixed(2)}%`}
+                            subtitle="Confidence"
+                        />
+                        <PredictionCard
+                            title="Random Forest"
+                            value={`${(predictions["Random Forest"]?.confidence * 100).toFixed(2)}%`}
+                            subtitle="Confidence"
+                        />
+                        <PredictionCard
+                            title="XGBoost"
+                            value={`${(predictions["XGBoost"]?.confidence * 100).toFixed(2)}%`}
+                            subtitle="Confidence"
+                        />
+                        <PredictionCard
+                            title={`Best Model: ${summary.best_model || 'N/A'}`}
+                            value={finalDecisionText}
+                            subtitle="Final Decision"
+                            resultClass={finalDecisionClass}
+                        />
+                    </div>
 
-                {isLoading || !predictData ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-                        <CircularProgress />
-                        <Typography sx={{ ml: 2 }}>Fetching prediction data...</Typography>
-                    </Box>
-                ) : (
-                    <>
-                        {/* --- Grid Card Atas --- */}
-                        <Grid
-                            container
-                            spacing={3}
-                            justifyContent="center" 
-                            sx={{ mb: 4 }}
-                        >
-                            <Grid item xs={12} sm={6} md={3}>
-                                <PredictionCard
-                                    title="Logistic Regression"
-                                    value={`${(
-                                        predictions["Logistic Regression"]?.confidence * 100
-                                    ).toFixed(2)}%`}
-                                    subtitle="Confidence"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <PredictionCard
-                                    title="Random Forest"
-                                    value={`${(
-                                        predictions["Random Forest"]?.confidence * 100
-                                    ).toFixed(2)}%`}
-                                    subtitle="Confidence"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <PredictionCard
-                                    title="XGBoost"
-                                    value={`${(
-                                        predictions["XGBoost"]?.confidence * 100
-                                    ).toFixed(2)}%`}
-                                    subtitle="Confidence"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <PredictionCard
-                                    title={`Best Model: ${summary.best_model}`}
-                                    value={finalDecisionText}
-                                    subtitle="Final Decision"
-                                    color={finalDecisionColor}
-                                />
-                            </Grid>
-                        </Grid>
-
-                        {/* --- Grid Chart Bawah --- */}
-                        <Grid
-                            container
-                            spacing={3}
-                            justifyContent="center" 
-                            alignItems="stretch"
-                        >
-                            <Grid item xs={12} md={8}>
-                                <PredictionChart predictData={predictData} />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <ConfidenceChart predictData={predictData} />
-                            </Grid>
-                        </Grid>
-                    </>
-                )}
-            </Box>
-        </Box>
+                    {/* --- Grid Chart Bawah (Chart Ukuran Baru) --- */}
+                    <div className="grid-row grid-chart-layout-revised">
+                        <div className="chart-item chart-main-focus">
+                            {/* Prediction Chart - Menggunakan predictData sebagai prop */}
+                            <PredictionChart predictData={predictData} /> 
+                        </div>
+                        <div className="chart-item chart-side-focus-revised">
+                            {/* Confidence Chart */}
+                            <ConfidenceChart predictData={predictData} />
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
     );
 }

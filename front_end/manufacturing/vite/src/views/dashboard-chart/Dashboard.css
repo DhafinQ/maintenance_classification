@@ -1,0 +1,165 @@
+/* --- Root Variables & Base Styles --- */
+:root {
+    --primary-color: #673ab7; /* Deep Purple */
+    --primary-dark: #512da8;
+    --success-color: #4caf50; /* Green */
+    --error-color: #f44336; /* Red */
+    --text-dark: #212121;
+    --text-secondary: #757575;
+    --bg-light: #f9fafb;
+    --shadow-main: 0 4px 12px rgba(103, 58, 183, 0.15);
+}
+
+/* --- Container Utama (Menggantikan Wrapper & Card) --- */
+/* .dashboard-container kini memegang style card utama */
+.dashboard-container.main-card {
+    /* Background di luar card, jika ada */
+    background-color: var(--bg-light); 
+    min-height: 100vh;
+    padding: 40px 0;
+    box-sizing: border-box;
+    /* Card Styling */
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+    background: linear-gradient(145deg, #ffffff, #f7f5ff);
+    border-radius: 16px;
+    box-shadow: var(--shadow-main);
+    padding: 30px 40px;
+}
+
+/* --- Typography --- */
+/* Menggunakan kelas 'title' seperti referensi */
+.dashboard-title.title { 
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 0.5px;
+}
+
+/* --- Grid Layout (Flexbox & CSS Grid) --- */
+.grid-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Grid Card Atas (4 kolom) */
+.grid-4-cols {
+    justify-content: space-between;
+}
+
+.grid-4-cols > * {
+    /* Setiap card mengambil kurang dari 25% agar ada ruang gap */
+    flex-basis: calc(25% - 15px); 
+    min-width: 150px; 
+}
+
+/* Grid Chart Bawah (Fokus pada Chart Utama) */
+.grid-chart-layout {
+    align-items: stretch;
+}
+
+.chart-main-focus {
+    /* Chart Utama: Mengambil sekitar 65% lebar */
+    flex-basis: 65%; 
+    min-width: 300px;
+}
+
+.chart-side-focus {
+    /* Chart Samping: Mengambil sekitar 35% lebar */
+    flex-basis: calc(35% - 20px); 
+    min-width: 250px;
+}
+
+/* --- Chart/Item Card Styling --- */
+.chart-item {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex; 
+    flex-direction: column; 
+    flex-grow: 1; 
+}
+
+/* --- Alert Card Styling (Untuk Warning API) --- */
+.alert-card {
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    border: 1px solid transparent;
+}
+
+.alert-spacing {
+    margin-bottom: 20px;
+}
+
+.alert-error {
+    background-color: #ffebee; /* Light red */
+    color: var(--error-color);
+    border-color: var(--error-color);
+}
+
+.alert-card h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+}
+
+.alert-card p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+/* --- Loading State --- */
+.loading-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: var(--primary-color);
+}
+
+.spinner {
+    border: 4px solid rgba(103, 58, 183, 0.2);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-right: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- Responsiveness --- */
+@media (max-width: 1024px) {
+    /* Di layar yang lebih kecil, card menjadi 2 kolom */
+    .grid-4-cols > * {
+        flex-basis: calc(50% - 10px); 
+    }
+    
+    /* Chart kembali menjadi 1 kolom penuh di bawah 1024px */
+    .chart-main-focus, 
+    .chart-side-focus {
+        flex-basis: 100%; 
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container.main-card {
+        padding: 20px;
+        margin: 20px auto;
+    }
+    /* Card menjadi 1 kolom penuh di layar mobile */
+    .grid-4-cols > * {
+        flex-basis: 100%; 
+    }
+}
