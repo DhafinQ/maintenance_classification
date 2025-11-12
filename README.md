@@ -1,10 +1,3 @@
-```
-root/
-├── back_end/
-└── front_end/
-    └── manufacturing/
-        └── vite/
-```
 
 ---
 
