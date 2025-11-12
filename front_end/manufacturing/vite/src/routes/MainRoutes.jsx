@@ -21,7 +21,7 @@ const MainRoutes = {
     children: [
         {
             path: '/',
-            element: <FormPage />
+            element: <PredictionChartDashboard />
         },
 
         // --- ROUTE BARU: Prediction Chart Dashboard ---
