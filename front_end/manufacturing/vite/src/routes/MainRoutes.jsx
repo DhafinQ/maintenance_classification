@@ -5,13 +5,13 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
-
+const DashboardDefault = Loadable(lazy(() => import('Views/dashboard/Default'))); // DIKOREKSI: Views/
 // sample page routing
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
-
+const SamplePage = Loadable(lazy(() => import('Views/sample-page'))); // DIKOREKSI: Views/
 // form routing BARU
-const FormPage = Loadable(lazy(() => import('views/form'))); // BARU: Menambahkan loadable untuk FormPage
+const FormPage = Loadable(lazy(() => import('Views/form'))); // DIKOREKSI: Views/
+// prediction chart dashboard routing BARU
+const PredictionChartDashboard = Loadable(lazy(() => import('Views/dashboard-chart/Dashboard'))); // DIKOREKSI: Views/
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -21,22 +21,21 @@ const MainRoutes = {
     children: [
         {
             path: '/',
-            element: <DashboardDefault />
+            element: <FormPage />
         },
+
+        // --- ROUTE BARU: Prediction Chart Dashboard ---
         {
-            path: 'dashboard',
-            children: [
-                {
-                    path: 'default',
-                    element: <DashboardDefault />
-                }
-            ]
+            path: 'dashboard-chart',
+            element: <PredictionChartDashboard />
         },
+
         // --- Sample Page Route ---
         {
-            path: '/sample-page',
+            path: 'sample-page',
             element: <SamplePage />
         },
+
         // --- Form Route BARU ---
         {
             path: 'form-input',
