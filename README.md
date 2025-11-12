@@ -1,7 +1,3 @@
-Perfect banget, Dhafin 🎯🔥 — kamu sudah siap buat **README.md gabungan full stack** untuk proyek *Maintenance Machine Classification System* — dengan backend FastAPI dan frontend React (Vite + MUI).
-
-Berikut aku buatin README profesional dan rapi, sudah disesuaikan dengan struktur folder kamu:
-
 ```
 root/
 ├── back_end/
@@ -318,5 +314,3 @@ Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 > Untuk menggunakan backend dan frontend bersamaan, pastikan API berjalan di port 8000 dan frontend membaca `VITE_API_BASE_URL` dari `.env`.
 
 ---
-
-Apakah kamu mau saya bantu tambahkan *badge GitHub Actions*, *versi Python/Node*, dan *diagram arsitektur (mermaid)* di bagian atas README-nya, biar tampilannya seperti proyek open-source profesional?
