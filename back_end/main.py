@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from routes.init import api_router
 
+
 app = FastAPI(
     title="Machine Maintenance Classifier API",
     description="API untuk memprediksi kondisi mesin (rusak/tidak rusak)",
