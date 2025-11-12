@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom'; // 🧭 Tambahkan ini
+import { useNavigate } from 'react-router-dom';
 
 // 1. Page wrapper
 const PageWrapper = styled(Box)(({ theme }) => ({
@@ -50,6 +50,7 @@ const FormContent = styled(CardContent)(({ theme }) => ({
   padding: theme.spacing(5),
 }));
 
+// 🎨 Tombol ungu
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
   padding: theme.spacing(1.8),
@@ -57,8 +58,32 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontWeight: 700,
   fontSize: '1rem',
   textTransform: 'none',
-  boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
+  backgroundColor: '#673ab7',
+  color: '#fff',
+  '&:hover': {
+    backgroundColor: '#5e35b1',
+  },
+  boxShadow: '0 4px 12px rgba(103, 58, 183, 0.4)',
 }));
+
+// 🎨 Input field dengan border ungu
+const PurpleTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#673ab7',
+    },
+    '&:hover fieldset': {
+      borderColor: '#5e35b1',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#673ab7',
+      borderWidth: 2,
+    },
+  },
+  '& label.Mui-focused': {
+    color: '#673ab7',
+  },
+});
 
 const TypeOptions = [
   { value: 0, label: 'High Quality (0)' },
@@ -80,7 +105,7 @@ export default function InputForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [predictionResult, setPredictionResult] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // 🧭 Hook untuk redirect
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -155,11 +180,10 @@ export default function InputForm() {
 
       setPredictionResult(Number(finalPrediction));
 
-      // ✅ Redirect ke dashboard setelah hasil diterima
+      // Redirect setelah hasil diterima
       setTimeout(() => {
         navigate('/dashboard-chart');
       }, 500);
-
     } catch (err) {
       console.error(err);
       setError(err.message || 'Terjadi kesalahan saat memproses permintaan.');
@@ -180,7 +204,7 @@ export default function InputForm() {
         <FormCard>
           <FormContent>
             <Box sx={{ mb: 4, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: '#1976d2', mb: 0.5 }}>
+              <Typography variant="h4" sx={{ fontWeight: 800, color: '#4a148c', mb: 0.5 }}>
                 Input Data Mesin
               </Typography>
               <Typography variant="subtitle1" color="text.secondary">
@@ -198,7 +222,7 @@ export default function InputForm() {
 
                 {error && <Alert severity="warning">{error}</Alert>}
 
-                <TextField
+                <PurpleTextField
                   select
                   fullWidth
                   label="Type"
@@ -213,9 +237,9 @@ export default function InputForm() {
                       {o.label}
                     </MenuItem>
                   ))}
-                </TextField>
+                </PurpleTextField>
 
-                <TextField
+                <PurpleTextField
                   fullWidth
                   label="Air Temperature (°C)"
                   name="Air_temperature_C"
@@ -227,7 +251,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <TextField
+                <PurpleTextField
                   fullWidth
                   label="Process Temperature (°C)"
                   name="Process_temperature_C"
@@ -239,7 +263,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <TextField
+                <PurpleTextField
                   fullWidth
                   label="Rotational Speed (rpm)"
                   name="Rotational_speed_rpm"
@@ -250,7 +274,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <TextField
+                <PurpleTextField
                   fullWidth
                   label="Torque (Nm)"
                   name="Torque_Nm"
@@ -262,7 +286,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <TextField
+                <PurpleTextField
                   fullWidth
                   label="Tool Wear (min)"
                   name="Tool_wear_min"
@@ -276,7 +300,6 @@ export default function InputForm() {
                 <StyledButton
                   type="submit"
                   variant="contained"
-                  color="primary"
                   disabled={isLoading}
                   endIcon={
                     isLoading ? <CircularProgress size={18} color="inherit" /> : <SendIcon />
