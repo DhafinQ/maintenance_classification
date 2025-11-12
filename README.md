@@ -220,8 +220,8 @@ python migrations/seed_data.py
 
 | Method | Endpoint         | Deskripsi                  | Body                                                                            | Output                                              |
 | ------ | ---------------- | -------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------- |
-| POST   | `/auth/register` | Registrasi user baru       | `{ "username": "Dhafin", "email": "dhafin@example.com", "password": "qwerty" }` | `{ "message": "User created successfully" }`        |
-| POST   | `/auth/login`    | Login & dapatkan token JWT | `{ "email": "dhafin@example.com", "password": "qwerty" }`                       | `{ "access_token": "...", "token_type": "bearer" }` |
+| POST   | `/auth/register` | Registrasi user baru       | `{ "username": "Admin", "email": "admin@example.com", "password": "qwerty" }` | `{ "message": "User created successfully" }`        |
+| POST   | `/auth/login`    | Login & dapatkan token JWT | `{ "email": "admin@example.com", "password": "qwerty" }`                       | `{ "access_token": "...", "token_type": "bearer" }` |
 
 ---
 
@@ -230,9 +230,22 @@ python migrations/seed_data.py
 | Method | Endpoint         | Deskripsi         | Input             | Output                                                    |
 | ------ | ---------------- | ----------------- | ----------------- | --------------------------------------------------------- |
 | GET    | `/machines/`     | Ambil semua mesin | -                 | `[ { "id": 1, "machine_code": "MC-0001", "type": "L" } ]` |
-| POST   | `/machines/`     | Tambah mesin baru | `{ "type": "M" }` | `{ "machine_code": "MC-0005", "type": "M" }`              |
-| PUT    | `/machines/{id}` | Edit mesin        | `{ "type": "H" }` | `{ "message": "Machine updated" }`                        |
+| POST   | `/machines/`     | Tambah mesin baru | `{ "machine_code": "MC-0005", "type": "M" }` | `{ "machine_code": "MC-0005", "type": "M" }`              |
+| PUT    | `/machines/{id}` | Edit mesin        | `{ "machine_code": "MC-0005", "type": "H" }` | `{ "message": "Machine updated" }`                        |
 | DELETE | `/machines/{id}` | Hapus mesin       | -                 | `{ "message": "Machine deleted" }`                        |
+
+---
+
+---
+
+###  📦 Product
+
+| Method | Endpoint         | Deskripsi         | Input             | Output                                                    |
+| ------ | ---------------- | ----------------- | ----------------- | --------------------------------------------------------- |
+| GET    | `/products/`     | Ambil semua product | -                 | `[ { "id": 1, "product_code": "PC-0001", "product_name": "Product AAB" } ]` |
+| POST   | `/products/`     | Tambah product | `{ "product_code": "PC-0002", "product_name": "Product X" }` | `{ "product_code": "PC-0002", ... }`              |
+| PUT    | `/products/{id}` | Edit product        | `{ "product_code": "PC-0002", "product_name": "Product X" }` | `{ "message": "Machine updated" }`                        |
+| DELETE | `/products/{id}` | Hapus mesin       | -                 | `{ "message": "Machine deleted" }`                        |
 
 ---
 
