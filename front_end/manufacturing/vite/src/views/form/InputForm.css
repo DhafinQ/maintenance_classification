@@ -1,0 +1,200 @@
+/* Warna Dasar */
+:root {
+  --primary-color: #673ab7; /* Deep Purple */
+  --primary-dark: #512da8;
+  --primary-light: #ede7f6;
+  --text-primary: #1976d2; /* Biru untuk judul, menonjolkan dari ungu */
+  --text-secondary: #6c757d;
+  --bg-light: #f8f9fa;
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --shadow-primary: rgba(103, 58, 183, 0.4);
+}
+
+/* 1. Page Wrapper */
+.page-wrapper {
+  min-height: 100vh;
+  background: var(--bg-light);
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  /* Agar konten dimulai dari atas (tidak center vertikal) */
+  align-items: flex-start; 
+}
+
+/* 2. Content Grid (DIUBAH: Dihapus batasan max-width dan disederhanakan) */
+.content-grid {
+  width: 100%;
+  max-width: 1200px; /* <--- BARU: Batasan lebar maksimum seperti container utama Anda sebelumnya */
+  padding: 0 16px;
+}
+
+/* 3. Form Card (DIUBAH: Mirip main-card sebelumnya) */
+.form-card {
+  /* Menggunakan gaya yang mirip dengan .main-card di CSS tabel */
+  background: linear-gradient(145deg, #ffffff, #f7f5ff); 
+  border-radius: 20px; 
+  box-shadow: 0 10px 30px rgba(103, 58, 183, 0.1); 
+  border: none;
+  width: 100%;
+  transition: all 0.4s ease;
+  box-sizing: border-box;
+}
+
+.form-card:hover {
+  box-shadow: 0 15px 40px rgba(103, 58, 183, 0.15); 
+}
+
+.form-content {
+  padding: 40px;
+}
+
+/* 4. Header */
+.form-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.form-title {
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 5px 0;
+  font-size: 1.8rem;
+}
+
+.form-subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* 5. Form Stack dan Input */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.2);
+}
+
+/* Style Khusus Dropdown */
+.select-input {
+  /* Hilangkan arrow default */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--primary-dark) 50%),
+                    linear-gradient(135deg, var(--primary-dark) 50%, transparent 50%);
+  background-position: right 15px top 50%, right 10px top 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 30px; 
+}
+
+
+/* 6. Button */
+.styled-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 18px 25px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px var(--shadow-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.styled-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: 0 8px 20px rgba(103, 58, 183, 0.6);
+  transform: translateY(-2px);
+}
+
+.styled-button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.send-icon {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+/* 7. Loading Spinner */
+.styled-button.loading .send-icon {
+  display: none;
+}
+
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 8. Alert Styles */
+.alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.alert-success {
+  background-color: #e8f5e9; /* Light Green */
+  color: #388e3c; /* Dark Green */
+  border: 1px solid #a5d6a7;
+}
+
+.alert-error {
+  background-color: #ffebee; /* Light Red */
+  color: #d32f2f; /* Dark Red */
+  border: 1px solid #ef9a9a;
+}
+
+.alert-warning {
+  background-color: #fff3e0; /* Light Orange */
+  color: #f57c00; /* Dark Orange */
+  border: 1px solid #ffcc80;
+}

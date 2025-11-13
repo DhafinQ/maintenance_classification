@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // 🧭 Tambahkan ini
 
 // 1. Page wrapper
 const PageWrapper = styled(Box)(({ theme }) => ({
@@ -50,7 +50,6 @@ const FormContent = styled(CardContent)(({ theme }) => ({
   padding: theme.spacing(5),
 }));
 
-// 🎨 Tombol ungu
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
   padding: theme.spacing(1.8),
@@ -58,132 +57,135 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontWeight: 700,
   fontSize: '1rem',
   textTransform: 'none',
-  backgroundColor: '#673ab7',
-  color: '#fff',
-  '&:hover': {
-    backgroundColor: '#5e35b1',
-  },
-  boxShadow: '0 4px 12px rgba(103, 58, 183, 0.4)',
+  boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
 }));
 
-// 🎨 Input field dengan border ungu
-const PurpleTextField = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: '#673ab7',
-    },
-    '&:hover fieldset': {
-      borderColor: '#5e35b1',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#673ab7',
-      borderWidth: 2,
-    },
-  },
-  '& label.Mui-focused': {
-    color: '#673ab7',
-  },
-});
-
 const TypeOptions = [
-  { value: 0, label: 'High Quality (0)' },
-  { value: 1, label: 'Low Quality (1)' },
-  { value: 2, label: 'Medium Quality (2)' },
+    { value: 0, label: 'High Quality (0)' },
+    { value: 1, label: 'Low Quality (1)' },
+    { value: 2, label: 'Medium Quality (2)' },
 ];
 
 const initialFormData = {
-  Type: 0,
-  Air_temperature_C: '',
-  Process_temperature_C: '',
-  Rotational_speed_rpm: '',
-  Torque_Nm: '',
-  Tool_wear_min: '',
+    Type: 0,
+    Air_temperature_C: '',
+    Process_temperature_C: '',
+    Rotational_speed_rpm: '',
+    Torque_Nm: '',
+    Tool_wear_min: '',
 };
 
+// === KOMPONEN UTAMA ===
 export default function InputForm() {
   const [formData, setFormData] = useState(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [predictionResult, setPredictionResult] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // 🧭 Hook untuk redirect
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'Type') setFormData((p) => ({ ...p, Type: Number(value) }));
-    else setFormData((p) => ({ ...p, [name]: value }));
-    setPredictionResult(null);
-    setError(null);
-  };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'Type') setFormData((p) => ({ ...p, Type: Number(value) }));
+        else setFormData((p) => ({ ...p, [name]: value }));
+        setPredictionResult(null);
+        setError(null);
+    };
 
-  const validateAndBuildPayload = () => {
-    const payload = {};
-    for (const key of Object.keys(formData)) {
-      if (key === 'Type') {
-        payload[key] = Number(formData.Type);
-        continue;
-      }
-      const raw = formData[key];
-      if (raw === '' || raw === null || raw === undefined) {
-        throw new Error(`Field "${key}" tidak boleh kosong.`);
-      }
-      const num = parseFloat(raw);
-      if (!Number.isFinite(num)) throw new Error(`Field "${key}" harus berupa angka valid.`);
-      payload[key] = num;
-    }
-    return payload;
-  };
+    const validateAndBuildPayload = () => {
+        const payload = {};
+        for (const key of Object.keys(formData)) {
+            if (key === 'Type') {
+                payload[key] = Number(formData.Type);
+                continue;
+            }
+            const raw = formData[key];
+            if (raw === '' || raw === null || raw === undefined) {
+                throw new Error(`Field "${key.replace(/_/g, ' ')}" tidak boleh kosong.`);
+            }
+            const num = parseFloat(raw);
+            if (!Number.isFinite(num)) throw new Error(`Field "${key.replace(/_/g, ' ')}" harus berupa angka valid.`);
+            payload[key] = num;
+        }
+        return payload;
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setPredictionResult(null);
-    setError(null);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setPredictionResult(null);
+        setError(null);
 
-    let payload;
-    try {
-      payload = validateAndBuildPayload();
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-      return;
-    }
+        let payload;
+        try {
+            payload = validateAndBuildPayload();
+        } catch (err) {
+            setError(err.message);
+            setIsLoading(false);
+            return;
+        }
 
-    try {
-      const res = await fetch('http://127.0.0.1:8000/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+        // 1. Ambil Token dari Local Storage
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            setError('Anda harus login untuk melakukan prediksi.');
+            setIsLoading(false);
+            // Opsional: Redirect ke halaman login jika tidak ada token
+            // navigate('/pages/login', { replace: true }); 
+            return;
+        }
 
-      const text = await res.text();
-      if (!res.ok) throw new Error(`Server error ${res.status}. ${text ? text.slice(0, 200) : ''}`);
+        try {
+            // 2. Siapkan Headers dengan Token
+            const headers = { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // <--- Tambahkan token di sini
+            };
 
-      let data;
-      try {
-        data = text ? JSON.parse(text) : {};
-      } catch (err) {
-        throw new Error('Response dari server bukan JSON valid.');
-      }
+            const res = await fetch('http://127.0.0.1:8000/predict', {
+                method: 'POST',
+                headers: headers, // Gunakan headers yang sudah termasuk token
+                body: JSON.stringify(payload),
+            });
 
-      let finalPrediction;
-      if (typeof data.prediction !== 'undefined') finalPrediction = data.prediction;
-      else if (data.summary?.final_decision) finalPrediction = data.summary.final_decision;
-      else {
-        const candidate = Object.values(data).find(
-          (v) => typeof v === 'number' || (typeof v === 'string' && /^\d+$/.test(v))
-        );
-        finalPrediction = candidate;
-      }
+            const text = await res.text();
 
-      if (typeof finalPrediction === 'undefined')
-        throw new Error('Tidak menemukan hasil prediksi pada response server.');
+            // 3. Handle Error 401 (Unauthorized)
+            if (res.status === 401) {
+                 localStorage.removeItem('accessToken');
+                 localStorage.removeItem('username');
+                 navigate('/pages/login', { replace: true });
+                 return;
+            }
 
-      setPredictionResult(Number(finalPrediction));
+            if (!res.ok) throw new Error(`Server error ${res.status}. ${text ? text.slice(0, 200) : ''}`);
 
-      // Redirect setelah hasil diterima
+            let data;
+            try {
+                data = text ? JSON.parse(text) : {};
+            } catch (err) {
+                throw new Error('Response dari server bukan JSON valid.');
+            }
+
+            let finalPrediction;
+            if (typeof data.prediction !== 'undefined') finalPrediction = data.prediction;
+            else if (data.summary?.final_decision) finalPrediction = data.summary.final_decision;
+            else {
+                const candidate = Object.values(data).find(
+                    (v) => typeof v === 'number' || (typeof v === 'string' && /^\d+$/.test(v))
+                );
+                finalPrediction = candidate;
+            }
+
+            if (typeof finalPrediction === 'undefined')
+                throw new Error('Tidak menemukan hasil prediksi pada response server.');
+
+            setPredictionResult(Number(finalPrediction));
+
+      // ✅ Redirect ke dashboard setelah hasil diterima
       setTimeout(() => {
         navigate('/dashboard-chart');
       }, 500);
+
     } catch (err) {
       console.error(err);
       setError(err.message || 'Terjadi kesalahan saat memproses permintaan.');
@@ -192,11 +194,30 @@ export default function InputForm() {
     }
   };
 
-  const getPredictionMessage = (prediction) => {
-    if (prediction === 1)
-      return { severity: 'error', text: 'Prediksi: GAGAL (Failure detected)' };
-    return { severity: 'success', text: 'Prediksi: AMAN (No failure)' };
-  };
+    const getPredictionMessage = (prediction) => {
+        if (prediction === 1)
+            return { severity: 'error', text: 'Prediksi: GAGAL (Failure detected)' };
+        return { severity: 'success', text: 'Prediksi: AMAN (No failure)' };
+    };
+
+    // Helper untuk membuat label
+    const createLabel = (name) => {
+        // Mengubah "Air_temperature_C" menjadi "Air Temperature (°C)"
+        if (name.includes('_C')) {
+            name = name.replace('_C', ' (°C)');
+        }
+        if (name.includes('_rpm')) {
+            name = name.replace('_rpm', ' (rpm)');
+        }
+        if (name.includes('_Nm')) {
+            name = name.replace('_Nm', ' (Nm)');
+        }
+        if (name.includes('_min')) {
+            name = name.replace('_min', ' (min)');
+        }
+        return name.replace(/_/g, ' ');
+    };
+
 
   return (
     <PageWrapper>
@@ -204,7 +225,7 @@ export default function InputForm() {
         <FormCard>
           <FormContent>
             <Box sx={{ mb: 4, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: '#4a148c', mb: 0.5 }}>
+              <Typography variant="h4" sx={{ fontWeight: 800, color: '#1976d2', mb: 0.5 }}>
                 Input Data Mesin
               </Typography>
               <Typography variant="subtitle1" color="text.secondary">
@@ -212,17 +233,18 @@ export default function InputForm() {
               </Typography>
             </Box>
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-              <Stack spacing={2.5}>
-                {predictionResult !== null && (
-                  <Alert severity={getPredictionMessage(predictionResult).severity}>
-                    {getPredictionMessage(predictionResult).text}
-                  </Alert>
-                )}
+                <form onSubmit={handleSubmit} noValidate className="form-stack">
+                    {/* Alert Hasil Prediksi */}
+                    {predictionResult !== null && (
+                        <div className={`alert alert-${getPredictionMessage(predictionResult).severity}`}>
+                            {getPredictionMessage(predictionResult).text}
+                        </div>
+                    )}
 
-                {error && <Alert severity="warning">{error}</Alert>}
+                    {/* Alert Error */}
+                    {error && <div className="alert alert-warning">{error}</div>}
 
-                <PurpleTextField
+                <TextField
                   select
                   fullWidth
                   label="Type"
@@ -237,9 +259,9 @@ export default function InputForm() {
                       {o.label}
                     </MenuItem>
                   ))}
-                </PurpleTextField>
+                </TextField>
 
-                <PurpleTextField
+                <TextField
                   fullWidth
                   label="Air Temperature (°C)"
                   name="Air_temperature_C"
@@ -251,7 +273,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <PurpleTextField
+                <TextField
                   fullWidth
                   label="Process Temperature (°C)"
                   name="Process_temperature_C"
@@ -263,7 +285,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <PurpleTextField
+                <TextField
                   fullWidth
                   label="Rotational Speed (rpm)"
                   name="Rotational_speed_rpm"
@@ -274,7 +296,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <PurpleTextField
+                <TextField
                   fullWidth
                   label="Torque (Nm)"
                   name="Torque_Nm"
@@ -286,7 +308,7 @@ export default function InputForm() {
                   size="medium"
                 />
 
-                <PurpleTextField
+                <TextField
                   fullWidth
                   label="Tool Wear (min)"
                   name="Tool_wear_min"
@@ -300,6 +322,7 @@ export default function InputForm() {
                 <StyledButton
                   type="submit"
                   variant="contained"
+                  color="primary"
                   disabled={isLoading}
                   endIcon={
                     isLoading ? <CircularProgress size={18} color="inherit" /> : <SendIcon />

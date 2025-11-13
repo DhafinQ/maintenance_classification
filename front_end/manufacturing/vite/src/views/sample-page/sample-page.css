@@ -1,180 +1,201 @@
-/* === Kartu Utama (Full Width Tapi Tetap Elegan) === */
+/* === Kartu Utama (Modern) === */
 .main-card {
-  background: linear-gradient(145deg, #ffffff, #f7f5ff);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(103, 58, 183, 0.15);
-  padding: 24px 32px;
+  background: #ffffff; /* Lebih bersih dari gradien */
+  border-radius: 20px; /* Sudut lebih membulat */
+  box-shadow: 0 10px 30px rgba(103, 58, 183, 0.1); /* Bayangan lebih halus dan menyebar */
+  padding: 30px 40px; /* Padding lebih luas */
   margin: 40px 0;
   width: 100%;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   box-sizing: border-box;
 }
 
 .main-card:hover {
-  box-shadow: 0 6px 20px rgba(103, 58, 183, 0.25);
+  box-shadow: 0 15px 40px rgba(103, 58, 183, 0.15); /* Hover shadow lebih menonjol */
 }
+
+/* --- */
 
 /* === Judul === */
 .title {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   color: #4a148c;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-weight: 800; /* Lebih tebal */
+  letter-spacing: 1px; /* Spasi lebih lebar */
   text-transform: uppercase;
+  font-size: 1.8em;
 }
 
-/* === Tabs === */
+/* --- */
+
+/* === Tabs (Modern - Opsi 1) === */
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 15px; /* Jarak antar tombol lebih besar */
+  margin-bottom: 30px; /* Jarak ke bawah lebih besar */
   justify-content: center;
 }
 
 .tab-btn {
-  background: #ede7f6;
-  color: #4a148c;
+  background: #f0f0f5; /* Warna latar yang lebih netral untuk default */
+  color: #512da8; /* Warna teks ungu gelap */
   border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
+  padding: 12px 25px; /* Padding lebih besar */
+  border-radius: 12px; /* Sudut lebih membulat */
   font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi halus */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); 
 }
 
 .tab-btn:hover {
-  background: #d1c4e9;
+  background: #e0d7f5;
+  color: #4a148c;
+  transform: translateY(-2px); /* Efek 'terangkat' */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
 }
 
 .tab-btn.active {
-  background: #673ab7;
+  background: linear-gradient(135deg, #673ab7, #512da8); /* Gradien untuk aktif */
   color: white;
-  box-shadow: 0 3px 8px rgba(103, 58, 183, 0.4);
+  box-shadow: 0 5px 15px rgba(103, 58, 183, 0.4); 
+  transform: translateY(-1px);
 }
 
-/* === Search Bar + Filter Container === */
-.search-filter-container {
+/* --- */
+
+/* === Search Bar + Filter Container (Lebih Rapi) === */
+.search-filter-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 40px; 
+  margin-bottom: 30px; /* Jarak yang lebih baik ke tabel */
   width: 100%;
   flex-wrap: wrap;
 }
 
-/* === Input Pencarian === */
+/* === Input Pencarian (Lebih Bersih) === */
 .search-input {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1.5px solid #d1c4e9;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.2s;
+  flex-grow: 1; 
+  max-width: 100%; /* Biarkan panjang */
+  min-width: 250px; 
+  padding: 12px 18px; /* Padding ditingkatkan */
+  border: 1px solid #c8c8c8; /* Border lebih tipis dan netral */
+  border-radius: 10px; 
+  font-size: 15px;
+  transition: all 0.3s ease;
   background-color: #fff;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #673ab7;
-  box-shadow: 0 0 5px rgba(103, 58, 183, 0.2);
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.2); /* Ring focus yang modern */
 }
 
-/* === Filter Dropdown (kanan search bar) === */
+/* === Filter Dropdown (Lebih Bersih) === */
 .filter-select {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1.5px solid #b39ddb;
-  background: linear-gradient(145deg, #f3e5f5, #ede7f6);
+  padding: 12px 18px; /* Padding ditingkatkan */
+  border-radius: 10px; 
+  border: 1px solid #c8c8c8; 
+  background: #ffffff; /* Background putih bersih */
   color: #4a148c;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   appearance: none;
+  /* Icon dropdown ungu, lebih kontras */
   background-image: linear-gradient(45deg, transparent 50%, #673ab7 50%), 
-                    linear-gradient(135deg, #673ab7 50%, transparent 50%);
-  background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px);
+                     linear-gradient(135deg, #673ab7 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 13px) center; 
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
+  flex-shrink: 0; 
 }
 
 .filter-select:hover {
   border-color: #673ab7;
-  background: linear-gradient(145deg, #ede7f6, #d1c4e9);
-  transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1); 
+  transform: none; /* Hilangkan scaling */
 }
 
 .filter-select:focus {
   outline: none;
-  box-shadow: 0 0 6px rgba(103, 58, 183, 0.25);
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.2); 
 }
 
-/* === Tabel Data (Full Width, Stylish Header) === */
+/* --- */
+
+/* === Tabel Data (Modern & Kontras) === */
 .data-table {
   width: 100%;
   border-collapse: collapse;
   border-radius: 12px;
   overflow: hidden;
   font-size: 14px;
-  table-layout: fixed;
-  box-shadow: 0 3px 10px rgba(103, 58, 183, 0.08);
+  table-layout: auto; /* Lebih baik dari fixed */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); /* Bayangan tabel yang halus */
 }
 
 .data-table thead tr {
-  background: linear-gradient(135deg, #673ab7, #512da8);
+  background: #673ab7; /* Solid color, lebih tegas */
   color: white;
 }
 
 .data-table th {
-  padding: 14px 10px;
-  text-align: center;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  white-space: normal; /* 🟣 memungkinkan teks panjang ke bawah */
+  padding: 16px 15px; /* Padding header ditingkatkan */
+  text-align: left; /* Teks header rata kiri (lebih modern) */
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: normal; 
   word-wrap: break-word;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .data-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid #e0d7f5;
+  padding: 14px 15px; /* Padding data ditingkatkan */
+  border-bottom: 1px solid #e8e8e8; /* Garis pemisah yang sangat halus */
   color: #333;
   background: #fff;
-  text-align: center;
+  text-align: left; /* Teks data rata kiri */
   word-wrap: break-word;
 }
 
 .data-table tr:nth-child(even) td {
-  background-color: #f9f7ff;
+  background-color: #f9f9ff; /* Warna zebra yang sangat lembut */
 }
 
 .data-table tr:hover td {
-  background-color: #ede7f6;
-  transition: background 0.25s ease-in-out;
+  background-color: #e6e0f5; /* Hover yang lebih terlihat */
+  transition: background 0.3s ease-in-out;
 }
 
-/* === Pagination Section === */
+/* --- */
+
+/* === Pagination Section (Minimalis) === */
 .pagination-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
+  gap: 15px;
+  margin-top: 30px;
   font-size: 14px;
-  color: #4a148c;
+  color: #512da8;
   width: 100%;
   box-sizing: border-box;
 }
 
 .rows-select select {
-  margin-left: 6px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #b39ddb;
-  background: #f3e5f5;
+  margin-left: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1c4e9;
+  background: #fff;
   font-weight: 500;
   color: #4a148c;
   cursor: pointer;
@@ -183,7 +204,7 @@
 
 .rows-select select:hover {
   border-color: #673ab7;
-  background: #ede7f6;
+  box-shadow: 0 0 5px rgba(103, 58, 183, 0.1);
 }
 
 .page-info {
@@ -192,43 +213,55 @@
 }
 
 .page-controls button {
-  background: #ede7f6;
-  color: #4a148c;
-  border: 1px solid #b39ddb;
-  border-radius: 6px;
-  padding: 5px 10px;
+  background: none; /* Tombol flat */
+  color: #673ab7;
+  border: 1px solid #d1c4e9;
+  border-radius: 8px;
+  padding: 8px 15px;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
 .page-controls button:hover:not(:disabled) {
   background: #673ab7;
   color: white;
-  border-color: #512da8;
-  transform: scale(1.05);
+  border-color: #673ab7;
+  transform: none;
 }
 
 .page-controls button:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* --- */
+
 /* === Responsif === */
 @media (max-width: 768px) {
-  .search-filter-container {
+  .main-card {
+    padding: 20px 20px;
+  }
+
+  .search-input {
+    max-width: none;
+  }
+  
+  .search-filter-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 15px; 
   }
 
   .filter-select {
     width: 100%;
   }
-
+  
   .data-table th,
   .data-table td {
-    padding: 8px;
-    font-size: 12px;
+    padding: 10px;
+    font-size: 11px;
+    text-align: center; /* Kembali ke center untuk mobile */
   }
 
   .pagination-container {
