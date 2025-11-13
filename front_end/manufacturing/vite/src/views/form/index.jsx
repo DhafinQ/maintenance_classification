@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Import file CSS baru Anda
-import './InputForm.css'; 
+import './InputForm.css';
 
 // === DATA & OPSI ===
 const TypeOptions = [
@@ -44,11 +44,17 @@ export default function InputForm() {
                 continue;
             }
             const raw = formData[key];
+            const displayKey = key.replace(/_/g, ' ');
+
             if (raw === '' || raw === null || raw === undefined) {
-                throw new Error(`Field "${key.replace(/_/g, ' ')}" tidak boleh kosong.`);
+                // Perbaikan sintaks template literal
+                throw new Error(`Field "${displayKey}" tidak boleh kosong.`);
             }
             const num = parseFloat(raw);
-            if (!Number.isFinite(num)) throw new Error(`Field "${key.replace(/_/g, ' ')}" harus berupa angka valid.`);
+            if (!Number.isFinite(num)) {
+                 // Perbaikan sintaks template literal
+                throw new Error(`Field "${displayKey}" harus berupa angka valid.`);
+            }
             payload[key] = num;
         }
         return payload;
@@ -75,15 +81,16 @@ export default function InputForm() {
             setError('Anda harus login untuk melakukan prediksi.');
             setIsLoading(false);
             // Opsional: Redirect ke halaman login jika tidak ada token
-            // navigate('/pages/login', { replace: true }); 
+            // navigate('/pages/login', { replace: true });
             return;
         }
 
         try {
             // 2. Siapkan Headers dengan Token
-            const headers = { 
+            const headers = {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // <--- Tambahkan token di sini
+                // Perbaikan sintaks template literal
+                'Authorization': `Bearer ${token}`
             };
 
             const res = await fetch('http://127.0.0.1:8000/predict', {
@@ -102,6 +109,7 @@ export default function InputForm() {
                  return;
             }
 
+            // Perbaikan sintaks template literal
             if (!res.ok) throw new Error(`Server error ${res.status}. ${text ? text.slice(0, 200) : ''}`);
 
             let data;
@@ -177,6 +185,7 @@ export default function InputForm() {
                 <form onSubmit={handleSubmit} noValidate className="form-stack">
                     {/* Alert Hasil Prediksi */}
                     {predictionResult !== null && (
+                        // Perbaikan sintaks template literal di JSX className
                         <div className={`alert alert-${getPredictionMessage(predictionResult).severity}`}>
                             {getPredictionMessage(predictionResult).text}
                         </div>
@@ -223,6 +232,7 @@ export default function InputForm() {
 
                     <button
                         type="submit"
+                        // Perbaikan sintaks template literal di JSX className
                         className={`styled-button ${isLoading ? 'loading' : ''}`}
                         disabled={isLoading}
                     >

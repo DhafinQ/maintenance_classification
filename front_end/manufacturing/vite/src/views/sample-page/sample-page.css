@@ -1,271 +1,397 @@
-/* === Kartu Utama (Modern) === */
-.main-card {
-  background: #ffffff; /* Lebih bersih dari gradien */
-  border-radius: 20px; /* Sudut lebih membulat */
-  box-shadow: 0 10px 30px rgba(103, 58, 183, 0.1); /* Bayangan lebih halus dan menyebar */
-  padding: 30px 40px; /* Padding lebih luas */
-  margin: 40px 0;
-  width: 100%;
-  transition: all 0.4s ease;
-  box-sizing: border-box;
+/*
+ * sample-page.css
+ * VERSI PROPORSIOAL FULL-FIT: Card mengisi layar, tabel mengisi Card (100%),
+ * dan lebar kolom diatur agar proporsional. Scroll horizontal mungkin diperlukan 
+ * untuk tabel Logs di layar sempit.
+ */
+
+/* --------------------------------- */
+/* Global Variables & Base Styles */
+/* --------------------------------- */
+:root {
+    --primary-color: #673ab7; /* Deep Purple */
+    --primary-dark: #512da8;
+    --primary-light: #ede7f6;
+    --text-heading: #111111; /* Diubah menjadi hampir hitam pekat untuk kontras yang lebih baik */
+    --text-general: #333333; /* Teks umum dibuat lebih gelap sedikit */
+    --bg-light: #f5f7fa;
+    --shadow-soft: rgba(0, 0, 0, 0.05);
+    --shadow-primary: rgba(103, 58, 183, 0.4);
+    --color-success: #4CAF50; /* Hijau */
+    --color-danger: #F44336; /* Merah */
+}
+
+body { 
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    color: var(--text-general);
+    /* Mengurangi padding luar agar lebih fit ke sisi */
+    padding: 0.5rem; 
+}
+
+/* --------------------------------- */
+/* Main Card & Layout */
+/* --------------------------------- */
+.main-card { 
+    /* Menyamakan style Card untuk semua bagian */
+    background: linear-gradient(145deg, #ffffff, #f7f5ff); /* Gradient ungu lembut */
+    border-radius: 16px; 
+    box-shadow: 0 10px 30px rgba(103, 58, 183, 0.15); 
+    transition: all 0.3s ease;
+    padding: 1.5rem;
+    /* Memastikan lebar 100% */
+    width: 100%; 
+    box-sizing: border-box; 
+    margin: 0; 
 }
 
 .main-card:hover {
-  box-shadow: 0 15px 40px rgba(103, 58, 183, 0.15); /* Hover shadow lebih menonjol */
+    box-shadow: 0 15px 40px rgba(103, 58, 183, 0.2);
 }
 
-/* --- */
-
-/* === Judul === */
-.title {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #4a148c;
-  font-weight: 800; /* Lebih tebal */
-  letter-spacing: 1px; /* Spasi lebih lebar */
-  text-transform: uppercase;
-  font-size: 1.8em;
+.title { 
+    font-weight: 800; /* Dibuat lebih tebal */
+    color: var(--text-heading);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem; /* Ukuran judul ditingkatkan */
 }
 
-/* --- */
-
-/* === Tabs (Modern - Opsi 1) === */
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px; /* Jarak antar tombol lebih besar */
-  margin-bottom: 30px; /* Jarak ke bawah lebih besar */
-  justify-content: center;
+/* --------------------------------- */
+/* Tabs (Menu) */
+/* --------------------------------- */
+.tabs { 
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
 }
 
-.tab-btn {
-  background: #f0f0f5; /* Warna latar yang lebih netral untuk default */
-  color: #512da8; /* Warna teks ungu gelap */
-  border: none;
-  padding: 12px 25px; /* Padding lebih besar */
-  border-radius: 12px; /* Sudut lebih membulat */
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi halus */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); 
+.tab-btn { 
+    padding: 0.5rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    background: #e5e5e5;
+    cursor: pointer;
+    font-weight: 700; /* Dibuat lebih tebal */
+    transition: all 0.2s ease;
+    color: var(--text-general); /* Memastikan teks tombol terlihat jelas */
 }
 
 .tab-btn:hover {
-  background: #e0d7f5;
-  color: #4a148c;
-  transform: translateY(-2px); /* Efek 'terangkat' */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+    background: #d0d0d0;
 }
 
 .tab-btn.active {
-  background: linear-gradient(135deg, #673ab7, #512da8); /* Gradien untuk aktif */
-  color: white;
-  box-shadow: 0 5px 15px rgba(103, 58, 183, 0.4); 
-  transform: translateY(-1px);
+    background: var(--primary-dark);
+    color: white;
+    box-shadow: 0 2px 6px var(--shadow-primary);
 }
 
-/* --- */
-
-/* === Search Bar + Filter Container (Lebih Rapi) === */
+/* --------------------------------- */
+/* Search, Filter & Add Bar */
+/* --------------------------------- */
 .search-filter-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px; 
-  margin-bottom: 30px; /* Jarak yang lebih baik ke tabel */
-  width: 100%;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    flex-wrap: wrap; 
 }
 
-/* === Input Pencarian (Lebih Bersih) === */
 .search-input {
-  flex-grow: 1; 
-  max-width: 100%; /* Biarkan panjang */
-  min-width: 250px; 
-  padding: 12px 18px; /* Padding ditingkatkan */
-  border: 1px solid #c8c8c8; /* Border lebih tipis dan netral */
-  border-radius: 10px; 
-  font-size: 15px;
-  transition: all 0.3s ease;
-  background-color: #fff;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    flex-grow: 1;
+    max-width: 400px; 
 }
 
-.search-input:focus {
-  outline: none;
-  border-color: #673ab7;
-  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.2); /* Ring focus yang modern */
-}
-
-/* === Filter Dropdown (Lebih Bersih) === */
 .filter-select {
-  padding: 12px 18px; /* Padding ditingkatkan */
-  border-radius: 10px; 
-  border: 1px solid #c8c8c8; 
-  background: #ffffff; /* Background putih bersih */
-  color: #4a148c;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  appearance: none;
-  /* Icon dropdown ungu, lebih kontras */
-  background-image: linear-gradient(45deg, transparent 50%, #673ab7 50%), 
-                     linear-gradient(135deg, #673ab7 50%, transparent 50%);
-  background-position: calc(100% - 18px) center, calc(100% - 13px) center; 
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
-  flex-shrink: 0; 
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600; /* Menambahkan bobot font */
 }
 
-.filter-select:hover {
-  border-color: #673ab7;
-  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1); 
-  transform: none; /* Hilangkan scaling */
+.add-btn, .save-btn { 
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    font-weight: 700; /* Dibuat lebih tebal */
+    margin-left: auto; 
 }
 
-.filter-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.2); 
+.add-btn:hover, .save-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
-/* --- */
 
-/* === Tabel Data (Modern & Kontras) === */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
-  font-size: 14px;
-  table-layout: auto; /* Lebih baik dari fixed */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); /* Bayangan tabel yang halus */
+/* --------------------------------- */
+/* Table Styling */
+/* --------------------------------- */
+.data-table { 
+    /* KEMBALI KE FULL-FIT */
+    width: 100%; 
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 1rem;
+    /* PENTING: Gunakan fixed layout untuk mengontrol proporsionalitas */
+    table-layout: fixed; 
 }
 
-.data-table thead tr {
-  background: #673ab7; /* Solid color, lebih tegas */
-  color: white;
+.data-table thead {
+    background: var(--primary-dark);
+    color: white;
 }
 
+.data-table th, .data-table td {
+    padding: 10px 8px; 
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    word-break: break-word; 
+    font-size: 0.9rem; 
+}
+
+/* BARU: Perbaikan tampilan judul tabel (TH) */
 .data-table th {
-  padding: 16px 15px; /* Padding header ditingkatkan */
-  text-align: left; /* Teks header rata kiri (lebih modern) */
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  white-space: normal; 
-  word-wrap: break-word;
-  line-height: 1.3;
+    /* Mengecilkan font lebih jauh untuk memberi ruang */
+    font-size: 0.75rem; 
+    
+    /* PENTING: Memastikan pemenggalan hanya terjadi pada spasi/per kata */
+    word-wrap: normal;
+    word-break: normal;
+    white-space: normal; /* Override jika ada nowrap sebelumnya */
+
+    /* Mengatur jarak antar baris */
+    line-height: 1.3;
+
+    /* Menambah tinggi minimum agar teks punya ruang untuk pecah baris */
+    min-height: 50px; 
+    vertical-align: top; /* Memastikan teks dimulai dari atas sel */
+    padding-top: 15px; /* Menambah sedikit padding atas agar tidak terlalu mepet */
+    font-weight: 700; /* Menambah bobot font header agar lebih tegas */
 }
 
-.data-table td {
-  padding: 14px 15px; /* Padding data ditingkatkan */
-  border-bottom: 1px solid #e8e8e8; /* Garis pemisah yang sangat halus */
-  color: #333;
-  background: #fff;
-  text-align: left; /* Teks data rata kiri */
-  word-wrap: break-word;
+/* 1. Kolom ID (Pertama) - Harus Sempit */
+.data-table th:first-child, 
+.data-table td:first-child { 
+    width: 50px; 
+    text-align: center; 
 }
 
-.data-table tr:nth-child(even) td {
-  background-color: #f9f9ff; /* Warna zebra yang sangat lembut */
+/* 2. Kolom MACHINE ID dan PRODUCT ID (Kolom ke-2 dan ke-3 Logs) - Dibuat Lebih Sempit */
+.data-table th:nth-child(2), .data-table td:nth-child(2),
+.data-table th:nth-child(3), .data-table td:nth-child(3) {
+    width: 90px; /* Batasi lebar agar tidak mengambil terlalu banyak ruang */
+    text-align: center;
 }
+
+/* 2. Kolom Aksi (Terakhir) - Harus Sempit */
+.data-table th:last-child, 
+.data-table td:last-child { 
+    width: 100px; /* Lebar untuk tombol Edit/Delete */
+    text-align: center; 
+}
+
+/* 3. Kolom Data Numerik Logs (4 sampai 8) - Harus Sempit dan Terpusat */
+/* air_temperature (kolom ke-4) dan seterusnya akan mengambil lebar tetap kecil */
+.data-table th:nth-child(4), .data-table td:nth-child(4), /* air_temperature */
+.data-table th:nth-child(5), .data-table td:nth-child(5), /* process_temperature */
+.data-table th:nth-child(6), .data-table td:nth-child(6), /* rotational_speed */
+.data-table th:nth-child(7), .data-table td:nth-child(7), /* torque */
+.data-table th:nth-child(8), .data-table td:nth-child(8) { /* tool_wear */
+    text-align: center;
+    width: 80px; /* Memaksa kolom ini memiliki lebar tetap kecil */
+}
+
+/* 4. Kolom PREDICTION (Kolom ke-9) dan CREATED AT (Kolom ke-10) */
+/* PREDICTION (kolom ke-9) */
+.data-table th:nth-child(9),
+.data-table td:nth-child(9) {
+    text-align: center;
+    width: 80px;
+}
+/* CREATED AT (kolom ke-10) */
+.data-table th:nth-child(10),
+.data-table td:nth-child(10) {
+    text-align: center;
+    width: 120px; /* Memastikan ada cukup ruang untuk timestamp */
+}
+
+/* Kolom ACTION (ke-11) adalah kolom terakhir dan sudah diatur di atas */
+
 
 .data-table tr:hover td {
-  background-color: #e6e0f5; /* Hover yang lebih terlihat */
-  transition: background 0.3s ease-in-out;
+    background-color: var(--primary-light);
 }
 
-/* --- */
+.action-cell { 
+    white-space: nowrap; 
+}
 
-/* === Pagination Section (Minimalis) === */
+.edit-btn, .delete-btn { 
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px 8px;
+    transition: transform 0.1s, color 0.2s; 
+    margin: 0 2px;
+}
+
+.edit-btn {
+    color: #6c757d; 
+}
+
+.edit-btn:hover {
+    transform: scale(1.1);
+    color: var(--color-success); 
+}
+
+.delete-btn {
+    color: #6c757d; 
+}
+
+.delete-btn:hover {
+    transform: scale(1.1);
+    color: var(--color-danger); 
+}
+
+/* --------------------------------- */
+/* Pagination */
+/* --------------------------------- */
 .pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 30px;
-  font-size: 14px;
-  color: #512da8;
-  width: 100%;
-  box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    font-size: 0.95rem;
+    color: #666;
+    border-top: 1px solid #eee;
+    margin-top: 1rem;
+    width: 100%; 
+    overflow-x: auto; 
 }
 
 .rows-select select {
-  margin-left: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1c4e9;
-  background: #fff;
-  font-weight: 500;
-  color: #4a148c;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.rows-select select:hover {
-  border-color: #673ab7;
-  box-shadow: 0 0 5px rgba(103, 58, 183, 0.1);
-}
-
-.page-info {
-  font-weight: 500;
-  color: #512da8;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
 .page-controls button {
-  background: none; /* Tombol flat */
-  color: #673ab7;
-  border: 1px solid #d1c4e9;
-  border-radius: 8px;
-  padding: 8px 15px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
+    background: #e5e5e5;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin-left: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .page-controls button:hover:not(:disabled) {
-  background: #673ab7;
-  color: white;
-  border-color: #673ab7;
-  transform: none;
+    background: #d0d0d0;
 }
 
 .page-controls button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-/* --- */
 
-/* === Responsif === */
-@media (max-width: 768px) {
-  .main-card {
-    padding: 20px 20px;
-  }
+/* --------------------------------- */
+/* Modal Styling */
+/* --------------------------------- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
-  .search-input {
-    max-width: none;
-  }
-  
-  .search-filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px; 
-  }
+.modal-card {
+    background: white;
+    padding: 1.2rem; 
+    border-radius: 12px;
+    max-width: 450px; 
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    
+    max-height: 90vh; 
+    overflow-y: auto; 
+}
 
-  .filter-select {
+.modal-card h3 {
+    margin-top: 0;
+    margin-bottom: 1.2rem; 
+    color: var(--text-heading);
+    font-size: 1.25rem; 
+    font-weight: 700; /* Dibuat lebih tebal */
+}
+
+.modal-form .form-group {
+    margin-bottom: 0.8rem; 
+}
+
+.modal-form label {
+    display: block;
+    font-weight: 700; /* Dibuat lebih tebal */
+    margin-bottom: 0.4rem; 
+    font-size: 0.85rem; 
+    color: var(--primary-dark);
+}
+
+.modal-form input {
     width: 100%;
-  }
-  
-  .data-table th,
-  .data-table td {
-    padding: 10px;
-    font-size: 11px;
-    text-align: center; /* Kembali ke center untuk mobile */
-  }
+    padding: 8px; 
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    font-size: 0.9rem; 
+}
 
-  .pagination-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.modal-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.2rem; 
+}
+
+.cancel-btn { 
+    background: #f5f5f5;
+    color: #444;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    font-weight: 600;
+}
+
+.cancel-btn:hover {
+    background: #ddd;
 }
