@@ -4,14 +4,11 @@ import { lazy } from 'react';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 
-// dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
-
-// sample page routing
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
-
-// form routing BARU
-const FormPage = Loadable(lazy(() => import('views/form'))); // BARU: Menambahkan loadable untuk FormPage
+// Pastikan semua impor menggunakan path folder yang benar
+const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default'))); 
+const SamplePage = Loadable(lazy(() => import('views/sample-page'))); 
+const FormPage = Loadable(lazy(() => import('views/form'))); 
+const PredictionChartDashboard = Loadable(lazy(() => import('views/dashboard-chart/Dashboard'))); 
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -20,26 +17,26 @@ const MainRoutes = {
     element: <MainLayout />,
     children: [
         {
+            // Root utama aplikasi setelah login: /free/
             path: '/',
-            element: <DashboardDefault />
+            element: <FormPage />
         },
+
+        // --- ROUTE: Prediction Chart Dashboard ---
         {
-            path: 'dashboard',
-            children: [
-                {
-                    path: 'default',
-                    element: <DashboardDefault />
-                }
-            ]
+            path: 'dashboard-chart', // Path: /free/dashboard-chart
+            element: <PredictionChartDashboard />
         },
+
         // --- Sample Page Route ---
         {
-            path: '/sample-page',
+            path: 'sample-page', // Path: /free/sample-page
             element: <SamplePage />
         },
-        // --- Form Route BARU ---
+
+        // --- Form Route ---
         {
-            path: 'form-input',
+            path: 'form-input', // Path: /free/form-input
             element: <FormPage />
         }
     ]

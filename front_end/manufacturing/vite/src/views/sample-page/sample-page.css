@@ -1,0 +1,273 @@
+/* === Kartu Utama (Modern) === */
+.main-card {
+  background: #ffffff; /* Lebih bersih dari gradien */
+  border-radius: 20px; /* Sudut lebih membulat */
+  box-shadow: 0 10px 30px rgba(103, 58, 183, 0.1); /* Bayangan lebih halus dan menyebar */
+  padding: 30px 40px; /* Padding lebih luas */
+  margin: 40px 0;
+  width: 100%;
+  transition: all 0.4s ease;
+  box-sizing: border-box;
+}
+
+.main-card:hover {
+  box-shadow: 0 15px 40px rgba(103, 58, 183, 0.15); /* Hover shadow lebih menonjol */
+}
+
+/* --- */
+
+/* === Judul === */
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #4a148c;
+  font-weight: 800; /* Lebih tebal */
+  letter-spacing: 1px; /* Spasi lebih lebar */
+  text-transform: uppercase;
+  font-size: 1.8em;
+}
+
+/* --- */
+
+/* === Tabs (Modern - Opsi 1) === */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Jarak antar tombol lebih besar */
+  margin-bottom: 30px; /* Jarak ke bawah lebih besar */
+  justify-content: center;
+}
+
+.tab-btn {
+  background: #f0f0f5; /* Warna latar yang lebih netral untuk default */
+  color: #512da8; /* Warna teks ungu gelap */
+  border: none;
+  padding: 12px 25px; /* Padding lebih besar */
+  border-radius: 12px; /* Sudut lebih membulat */
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi halus */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); 
+}
+
+.tab-btn:hover {
+  background: #e0d7f5;
+  color: #4a148c;
+  transform: translateY(-2px); /* Efek 'terangkat' */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #673ab7, #512da8); /* Gradien untuk aktif */
+  color: white;
+  box-shadow: 0 5px 15px rgba(103, 58, 183, 0.4); 
+  transform: translateY(-1px);
+}
+
+/* --- */
+
+/* === Search Bar + Filter Container (Lebih Rapi) === */
+.search-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px; 
+  margin-bottom: 30px; /* Jarak yang lebih baik ke tabel */
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+/* === Input Pencarian (Lebih Bersih) === */
+.search-input {
+  flex-grow: 1; 
+  max-width: 100%; /* Biarkan panjang */
+  min-width: 250px; 
+  padding: 12px 18px; /* Padding ditingkatkan */
+  border: 1px solid #c8c8c8; /* Border lebih tipis dan netral */
+  border-radius: 10px; 
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #673ab7;
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.2); /* Ring focus yang modern */
+}
+
+/* === Filter Dropdown (Lebih Bersih) === */
+.filter-select {
+  padding: 12px 18px; /* Padding ditingkatkan */
+  border-radius: 10px; 
+  border: 1px solid #c8c8c8; 
+  background: #ffffff; /* Background putih bersih */
+  color: #4a148c;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  /* Icon dropdown ungu, lebih kontras */
+  background-image: linear-gradient(45deg, transparent 50%, #673ab7 50%), 
+                     linear-gradient(135deg, #673ab7 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 13px) center; 
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  flex-shrink: 0; 
+}
+
+.filter-select:hover {
+  border-color: #673ab7;
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1); 
+  transform: none; /* Hilangkan scaling */
+}
+
+.filter-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.2); 
+}
+
+/* --- */
+
+/* === Tabel Data (Modern & Kontras) === */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 14px;
+  table-layout: auto; /* Lebih baik dari fixed */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); /* Bayangan tabel yang halus */
+}
+
+.data-table thead tr {
+  background: #673ab7; /* Solid color, lebih tegas */
+  color: white;
+}
+
+.data-table th {
+  padding: 16px 15px; /* Padding header ditingkatkan */
+  text-align: left; /* Teks header rata kiri (lebih modern) */
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: normal; 
+  word-wrap: break-word;
+  line-height: 1.3;
+}
+
+.data-table td {
+  padding: 14px 15px; /* Padding data ditingkatkan */
+  border-bottom: 1px solid #e8e8e8; /* Garis pemisah yang sangat halus */
+  color: #333;
+  background: #fff;
+  text-align: left; /* Teks data rata kiri */
+  word-wrap: break-word;
+}
+
+.data-table tr:nth-child(even) td {
+  background-color: #f9f9ff; /* Warna zebra yang sangat lembut */
+}
+
+.data-table tr:hover td {
+  background-color: #e6e0f5; /* Hover yang lebih terlihat */
+  transition: background 0.3s ease-in-out;
+}
+
+/* --- */
+
+/* === Pagination Section (Minimalis) === */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 30px;
+  font-size: 14px;
+  color: #512da8;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rows-select select {
+  margin-left: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1c4e9;
+  background: #fff;
+  font-weight: 500;
+  color: #4a148c;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rows-select select:hover {
+  border-color: #673ab7;
+  box-shadow: 0 0 5px rgba(103, 58, 183, 0.1);
+}
+
+.page-info {
+  font-weight: 500;
+  color: #512da8;
+}
+
+.page-controls button {
+  background: none; /* Tombol flat */
+  color: #673ab7;
+  border: 1px solid #d1c4e9;
+  border-radius: 8px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.page-controls button:hover:not(:disabled) {
+  background: #673ab7;
+  color: white;
+  border-color: #673ab7;
+  transform: none;
+}
+
+.page-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- */
+
+/* === Responsif === */
+@media (max-width: 768px) {
+  .main-card {
+    padding: 20px 20px;
+  }
+
+  .search-input {
+    max-width: none;
+  }
+  
+  .search-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px; 
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: 10px;
+    font-size: 11px;
+    text-align: center; /* Kembali ke center untuk mobile */
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  
+}

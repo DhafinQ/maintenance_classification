@@ -78,7 +78,7 @@ function MenuCard() {
         }
       }}
     >
-      <Box sx={{ p: 2 }}>
+      {/* <Box sx={{ p: 2 }}>
         <List disablePadding sx={{ pb: 1 }}>
           <ListItem alignItems="flex-start" disableGutters disablePadding>
             <ListItemAvatar sx={{ mt: 0 }}>
@@ -112,7 +112,7 @@ function MenuCard() {
           </ListItem>
         </List>
         <LinearProgressWithLabel value={80} />
-      </Box>
+      </Box> */}
     </Card>
   );
 }
