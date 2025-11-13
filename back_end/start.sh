@@ -1,25 +1,20 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting backend container..."
+echo "⏳ Waiting for MySQL to start..."
+until nc -z -v -w30 $DB_HOST $DB_PORT
+do
+  echo "Waiting for database connection..."
+  sleep 3
+done
 
-# Tunggu sebentar agar MySQL siap
-echo "⏳ Waiting for database to be ready..."
-sleep 5
+echo "✅ Database is up!"
 
-# Jalankan migrasi otomatis
-echo "📦 Running Alembic migrations..."
-alembic stamp head
+echo "🚀 Running migrations..."
 alembic upgrade head
 
-# Jalankan seed data (opsional)
-if [ -f "migrations/seed_data.py" ]; then
-  echo "🌱 Running seed data..."
-  python migrations/seed_data.py || true
-else
-  echo "⚠️ No seed_data.py found, skipping seeding."
-fi
+echo "🌱 Seeding initial data (if any)..."
+python migrations/seed_data.py || true
 
-# Jalankan server FastAPI
-echo "✅ Starting FastAPI..."
-exec uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+echo "▶️ Starting FastAPI server..."
+exec uvicorn main:app --host 0.0.0.0 --port 8000

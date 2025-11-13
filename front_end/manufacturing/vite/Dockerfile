@@ -15,5 +15,5 @@ COPY . .
 # RUN npm run build
 
 # Jalankan server Vite
-EXPOSE 5173
-CMD ["npm", "start"]
+EXPOSE 3000
+CMD ["npm", "start", "--", "--host"]
