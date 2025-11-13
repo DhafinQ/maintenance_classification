@@ -1,215 +1,364 @@
 import { useEffect, useState } from 'react';
 import './sample-page.css';
 
-// === Hook untuk fetch data (DIPERBAIKI UNTUK AUTENTIKASI) ===
+// === Hook untuk fetch data dengan token ===
 const useFetchData = (endpoint) => {
-    const [data, setData] = useState([]);
-    
-    useEffect(() => {
-        // 1. Ambil token dari Local Storage
-        const accessToken = localStorage.getItem('accessToken'); 
-        
-        // 2. Tentukan headers untuk request
-        const headers = {};
-        if (accessToken) {
-            // Format Bearer Token: "Bearer [token_value]"
-            headers['Authorization'] = `Bearer ${accessToken}`;
-        }
+  const [data, setData] = useState([]);
 
-        // 3. Lakukan fetch dengan menyertakan headers
-        fetch(`http://localhost:8000${endpoint}`, {
-            method: 'GET', // Asumsi method GET
-            headers: headers,
-        })
-          .then((res) => {
-              // Tambahkan penanganan untuk 401 Unauthorized
-              if (res.status === 401) {
-                  console.error("Unauthorized. Token might be invalid or expired.");
-                  // Opsional: Redirect ke halaman login di sini (misalnya window.location.href = '/login')
-              }
-              return res.json();
-          })
-          .then((data) => setData(data))
-          .catch((err) => console.error(`Error fetching ${endpoint}:`, err));
-    }, [endpoint]);
-    
-    return data;
+  const fetchData = () => {
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = {};
+    if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+
+    fetch(`http://localhost:8000${endpoint}`, { headers })
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((err) => console.error(`Error fetching ${endpoint}:`, err));
+  };
+
+  // Menambahkan fetchData ke dependencies untuk initial fetch
+  useEffect(() => {
+    fetchData();
+  }, [endpoint]); 
+
+  return [data, fetchData];
 };
 
 export default function SamplePage() {
-    const [tab, setTab] = useState(0);
-    const [search, setSearch] = useState('');
-    const [page, setPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(25);
-    const [filterPrediction, setFilterPrediction] = useState('Semua');
+  const [tab, setTab] = useState(0);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [filterPrediction, setFilterPrediction] = useState('Semua');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState('add'); // add | edit
+  const [formData, setFormData] = useState({});
+  const [selectedId, setSelectedId] = useState(null);
 
-    // Pemanggilan useFetchData tetap sama, tetapi sekarang akan mengirim token
-    const machines = useFetchData('/machines/');
-    const productions = useFetchData('/productions/');
-    const logs = useFetchData('/logs/');
+  const [machines, refetchMachines] = useFetchData('/machines/');
+  const [productions, refetchProductions] = useFetchData('/productions/');
+  const [logs, refetchLogs] = useFetchData('/logs/');
 
-    // ... (Sisa kode SamplePage tetap sama)
-    // === Fungsi filter (VERSI FINAL yang Lebih Kuat dan Bersih) ===
-    const filterData = (data, type) => {
-        return data.filter((item) => {
-            // 1. 🔍 PENCARIAN GLOBAL
-            const matchSearch = Object.values(item).some((v) =>
-                // Konversi ke string dengan aman dan bandingkan dengan pencarian lowercase
-                String(v ?? '').toLowerCase().includes(search.toLowerCase())
-            );
+  const tableMap = [
+    {
+      label: 'Machines',
+      endpoint: '/machines/',
+      rows: machines,
+      cols: ['id', 'machine_code', 'type'],
+    },
+    {
+      label: 'Productions',
+      endpoint: '/productions/',
+      rows: productions,
+      cols: ['id', 'product_code', 'product_name'],
+    },
+    {
+      label: 'Logs',
+      endpoint: '/logs/',
+      rows: logs,
+      cols: [
+        'id',
+        'machine_id',
+        'product_id',
+        'air_temperature',
+        'process_temperature',
+        'rotational_speed',
+        'torque',
+        'tool_wear',
+        'prediction',
+        'created_at',
+      ],
+    },
+  ];
 
-            // Data HARUS lolos pencarian (AND logic). Jika tidak, buang.
-            if (!matchSearch) return false;
+  const activeTable = tableMap[tab];
+  const refetchFn =
+    tab === 0 ? refetchMachines : tab === 1 ? refetchProductions : refetchLogs;
 
-            // 2. ⚙️ FILTER PREDIKSI (Hanya untuk Logs dan jika bukan 'Semua')
-            if (type === 'logs' && filterPrediction !== 'Semua') {
-                const itemPredictionLower = String(item.prediction ?? '').toLowerCase();
-                
-                // Mengubah nilai filter state ("Rusak" atau "Tidak Rusak") ke lowercase
-                const filterValueLower = filterPrediction.toLowerCase(); 
+  // === Filter Data ===
+  const filteredRows = activeTable.rows.filter((item) => {
+    const matchSearch = Object.values(item).some((v) =>
+      String(v ?? '').toLowerCase().includes(search.toLowerCase())
+    );
+    if (!matchSearch) return false;
 
-                // Data yang sudah lolos pencarian harus lolos filter prediksi.
-                // Contoh: "tidak rusak" === "tidak rusak"
-                return itemPredictionLower === filterValueLower;
-            }
+    if (activeTable.label === 'Logs' && filterPrediction !== 'Semua') {
+      return (
+        String(item.prediction ?? '').toLowerCase() ===
+        filterPrediction.toLowerCase()
+      );
+    }
+    return true;
+  });
 
-            // Jika filter Prediction adalah 'Semua' atau ini bukan tab Logs, 
-            // data lolos karena sudah lolos 'matchSearch' di awal.
-            return true;
-        });
-    };
+  const totalRows = filteredRows.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage);
+  const startIndex = (page - 1) * rowsPerPage;
+  const paginatedRows = filteredRows.slice(
+    startIndex,
+    startIndex + rowsPerPage
+  );
 
-    const columns = {
-        machines: ['id', 'machine_code', 'type'],
-        productions: ['id', 'product_code', 'product_name'],
-        logs: [
-            'id',
-            'machine_id',
-            'product_id',
-            'air_temperature',
-            'process_temperature',
-            'rotational_speed',
-            'torque',
-            'tool_wear',
-            'prediction',
-            'created_at',
-        ],
-    };
+  // === CRUD Handler ===
+  // Disesuaikan agar formData inisial hanya berisi kolom yang akan diedit/ditambahkan
+  const handleOpenModal = (mode, row = {}) => {
+    const initialData = mode === 'add' 
+      ? activeTable.cols.filter(col => col !== 'id' && col !== 'created_at').reduce((acc, col) => ({ ...acc, [col]: '' }), {}) 
+      : row;
+      
+    setModalMode(mode);
+    setFormData(initialData); 
+    setSelectedId(row.id || null);
+    setModalOpen(true);
+  };
 
-    const tableMap = [
-        { label: 'Machines', rows: filterData(machines, 'machines'), cols: columns.machines },
-        { label: 'Productions', rows: filterData(productions, 'productions'), cols: columns.productions },
-        { label: 'Logs', rows: filterData(logs, 'logs'), cols: columns.logs },
-    ];
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setFormData({});
+    setSelectedId(null);
+  };
 
-    const activeTable = tableMap[tab];
-    const totalRows = activeTable.rows.length;
-    const totalPages = Math.ceil(totalRows / rowsPerPage);
-    const startIndex = (page - 1) * rowsPerPage;
-    const paginatedRows = activeTable.rows.slice(startIndex, startIndex + rowsPerPage);
+  const handleFormChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const handleRowsChange = (e) => {
-        setRowsPerPage(Number(e.target.value));
-        setPage(1);
-    };
+  // Disesuaikan untuk memetakan 'product_code' ke 'code' untuk FastAPI
+  const handleSubmit = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    };
+    const url = `http://localhost:8000${activeTable.endpoint}${
+      modalMode === 'edit' ? selectedId + '/' : ''
+    }`;
 
-    return (
-        <div className="main-card">
-            <h2 className="title">Machine Maintenance Data</h2>
+    const method = modalMode === 'edit' ? 'PUT' : 'POST';
 
-            {/* === Tabs === */}
-            <div className="tabs">
-                {tableMap.map((t, i) => (
-                    <button
-                        key={i}
-                        className={`tab-btn ${tab === i ? 'active' : ''}`}
-                        onClick={() => {
-                            setTab(i);
-                            setPage(1);
-                            setFilterPrediction('Semua');
-                        }}
-                    >
-                        {t.label}
-                    </button>
-                ))}
-            </div>
+    let bodyData = formData;
 
-            {/* === Search + Filter Bar (satu baris) === */}
-            <div className="search-filter-bar">
-                <input
-                    className="search-input"
-                    placeholder={`Search ${activeTable.label.toLowerCase()}...`}
-                    value={search}
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                        setPage(1);
-                    }}
-                />
+    // KASUS KHUSUS: PRODUCTION. Memetakan product_code ke code sesuai ProductCreate model di FastAPI
+    if (activeTable.label === 'Productions') {
+        const { product_code, product_name, ...otherData } = formData;
+        bodyData = {
+            ...otherData,
+            code: product_code, // Ini adalah perbaikan utama untuk Error 422
+            product_name: product_name,
+        };
+        // Hapus field yang tidak diperlukan FastAPI saat POST/PUT
+        delete bodyData.id;
+        delete bodyData.created_at; 
+    } else {
+        // Untuk tabel lain, hapus id/created_at saat mode 'add'
+        if (modalMode === 'add') {
+             delete bodyData.id;
+             delete bodyData.created_at;
+        }
+    }
 
-                {activeTable.label === 'Logs' && (
-                    <select
-                        className="filter-select"
-                        value={filterPrediction}
-                        onChange={(e) => {
-                            setFilterPrediction(e.target.value);
-                            setPage(1);
-                        }}
-                    >
-                        <option value="Semua">Semua</option>
-                        <option value="Rusak">Rusak</option>
-                        <option value="Tidak Rusak">Tidak Rusak</option>
-                    </select>
-                )}
-            </div>
+    try {
+      const res = await fetch(url, {
+        method,
+        headers,
+        body: JSON.stringify(bodyData),
+      });
+      
+      if (!res.ok) {
+          // Tangani response error (termasuk 422)
+          const errorBody = await res.json();
+          console.error('Server Validation Error:', errorBody);
+          throw new Error(`Status ${res.status}: ${JSON.stringify(errorBody.detail)}`);
+      }
+      
+      handleCloseModal();
+      refetchFn();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert(`Gagal menyimpan data: ${error.message}`);
+    }
+  };
 
-            {/* === Table === */}
-            <table className="data-table">
-                <thead>
-                    <tr>
-                        {activeTable.cols.map((col) => (
-                            <th key={col}>{col.replace('_', ' ').toUpperCase()}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {paginatedRows.map((row) => (
-                        <tr key={row.id}>
-                            {activeTable.cols.map((col) => (
-                                <td key={col}>{row[col]}</td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+  const handleDelete = async (id) => {
+    if (!window.confirm('Yakin ingin menghapus data ini?')) return;
 
-            {/* === Pagination === */}
-            <div className="pagination-container">
-                <div className="rows-select">
-                    Rows per page:{' '}
-                    <select value={rowsPerPage} onChange={handleRowsChange}>
-                        <option value={25}>25</option>
-                        <option value={50}>50</option>
-                        <option value={100}>100</option>
-                    </select>
-                </div>
+    const accessToken = localStorage.getItem('accessToken');
+    const headers = { Authorization: `Bearer ${accessToken}` };
 
-                <div className="page-info">
-                    {totalRows === 0 ? 0 : startIndex + 1}–
-                    {Math.min(startIndex + rowsPerPage, totalRows)} of {totalRows}
-                </div>
+    try {
+      await fetch(`http://localhost:8000${activeTable.endpoint}${id}/`, {
+        method: 'DELETE',
+        headers,
+      });
+      refetchFn();
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+  };
 
-                <div className="page-controls">
-                    <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-                        ‹
-                    </button>
-                    <button
-                        disabled={page === totalPages || totalPages === 0}
-                        onClick={() => setPage(page + 1)}
-                    >
-                        ›
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+  const handleRowsChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  };
+
+  // === UI ===
+  return (
+    <div className="main-card">
+      <h2 className="title">Machine Maintenance Data</h2>
+
+      {/* Tabs */}
+      <div className="tabs">
+        {tableMap.map((t, i) => (
+          <button
+            key={i}
+            className={`tab-btn ${tab === i ? 'active' : ''}`}
+            onClick={() => {
+              setTab(i);
+              setPage(1);
+              setFilterPrediction('Semua');
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Search + Filter + Add Button */}
+      <div className="search-filter-bar">
+        <input
+          className="search-input"
+          placeholder={`Search ${activeTable.label.toLowerCase()}...`}
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+        />
+
+        {activeTable.label === 'Logs' && (
+          <select
+            className="filter-select"
+            value={filterPrediction}
+            onChange={(e) => {
+              setFilterPrediction(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="Semua">Semua</option>
+            <option value="Rusak">Rusak</option>
+            <option value="Tidak Rusak">Tidak Rusak</option>
+          </select>
+        )}
+
+        <button
+          className="add-btn"
+          onClick={() => handleOpenModal('add')}
+        >
+          + Tambah {activeTable.label}
+        </button>
+      </div>
+
+      {/* Table */}
+      <table className="data-table">
+        <thead>
+          <tr>
+            {activeTable.cols.map((col) => (
+              <th key={col}>{col.replace('_', ' ').toUpperCase()}</th>
+            ))}
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedRows.map((row) => (
+            <tr key={row.id}>
+              {activeTable.cols.map((col) => (
+                <td key={col}>{row[col]}</td>
+              ))}
+              <td className="action-cell">
+                <button
+                  className="edit-btn"
+                  onClick={() => handleOpenModal('edit', row)}
+                >
+                  ✏️
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(row.id)}
+                >
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Pagination */}
+      <div className="pagination-container">
+        <div className="rows-select">
+          Rows per page:{' '}
+          <select value={rowsPerPage} onChange={handleRowsChange}>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
+
+        <div className="page-info">
+          {totalRows === 0 ? 0 : startIndex + 1}–
+          {Math.min(startIndex + rowsPerPage, totalRows)} of {totalRows}
+        </div>
+
+        <div className="page-controls">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
+            ‹
+          </button>
+          <button
+            disabled={page === totalPages || totalPages === 0}
+            onClick={() => setPage(page + 1)}
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      {/* Modal */}
+      {modalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h3>
+              {modalMode === 'add'
+                ? `Tambah ${activeTable.label}`
+                : `Edit ${activeTable.label}`}
+            </h3>
+            <div className="modal-form">
+              {activeTable.cols
+                .filter((col) => col !== 'id')
+                .map((col) => (
+                  <div key={col} className="form-group">
+                    <label>{col.replace('_', ' ').toUpperCase()}</label>
+                    <input
+                      name={col}
+                      value={formData[col] || ''}
+                      onChange={handleFormChange}
+                      placeholder={col}
+                    />
+                  </div>
+                ))}
+            </div>
+            <div className="modal-actions">
+              <button className="cancel-btn" onClick={handleCloseModal}>
+                Batal
+              </button>
+              <button className="save-btn" onClick={handleSubmit}>
+                Simpan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
