@@ -15,17 +15,25 @@
 .dashboard-container.main-card {
     /* Background di luar card, jika ada */
     background-color: var(--bg-light);
-    min-height: 100vh;
-    padding: 40px 0;
+    
+    /* MODIFIKASI: Menghapus 100vh dan membuat tinggi adaptif (auto) */
+    min-height: auto; 
+    
+    padding: 40px 0; /* Jarak atas/bawah yang lebih moderat untuk konten di luar card */
     box-sizing: border-box;
     /* Card Styling */
-    width: 90%;
-    max-width: 1200px;
-    margin: 40px auto;
+    /* ** MODIFIKASI ** */
+    width: 95%; /* Tetap 95% agar ada gutter di kiri/kanan */
+    max-width: 1600px; /* Ditingkatkan menjadi 1600px. 3000px terlalu lebar dan akan sulit dibaca. */
+    /* ** END MODIFIKASI ** */
+    
+    /* MODIFIKASI: Mengurangi margin atas/bawah agar lebih kompak */
+    margin: 20px auto; 
+    
     background: linear-gradient(145deg, #ffffff, #f7f5ff);
     border-radius: 16px;
     box-shadow: var(--shadow-main);
-    padding: 30px 40px;
+    padding: 30px 40px; /* Padding dalam card */
 }
 
 /* --- Typography --- */
@@ -209,7 +217,8 @@
 @media (max-width: 768px) {
     .dashboard-container.main-card {
         padding: 20px;
-        margin: 20px auto;
+        /* MODIFIKASI: Kurangi margin di mobile */
+        margin: 10px auto; 
     }
     /* Card menjadi 1 kolom penuh di layar mobile */
     .grid-4-cols > * {

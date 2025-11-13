@@ -1,137 +1,117 @@
-// src/Views/dashboard-chart/PredictionChart.jsx
-
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
-import Chart from 'react-apexcharts';
 
-// ==============================|| CHART 1 - PREDICTION LABEL (BAR HORIZONTAL) ||============================== //
+// ==============================|| PREDICTION CHART - TEXT ONLY (LARGE AND SPACIOUS) ||============================== //
 
 export default function PredictionChart({ predictData }) {
     const predictions = predictData?.predictions || {};
     const summary = predictData?.summary || {};
     const modelNames = ['Logistic Regression', 'Random Forest', 'XGBoost'];
 
-    // Data Series: 0 = Tidak Rusak, 1 = Rusak
-    const seriesData = modelNames.map(name => {
-        const label = predictions[name]?.label;
-        return label === '1' ? 1 : 0; 
-    });
-
-    const series = [
-        {
-            name: 'Keputusan',
-            data: seriesData
-        }
-    ];
-
-    // Fungsi untuk mendapatkan warna BAR berdasarkan label
-    const getBarColor = (modelName) => {
+    // Fungsi untuk mendapatkan label teks (Rusak/Tidak Rusak)
+    const getPredictionLabel = (modelName) => {
         const label = predictions[modelName]?.label;
-        // Merah untuk Rusak (1), Hijau untuk Tidak Rusak (0)
-        return label === '1' ? '#FF4560' : '#00E396'; 
+        return label === '1' ? 'RUSAK (1)' : 'TIDAK RUSAK (0)'; 
     };
 
-    const chartOptions = useMemo(
-        () => ({
-            chart: {
-                type: 'bar',
-                height: '100%', 
-                toolbar: { show: false }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: true,
-                    columnWidth: '80%',
-                    borderRadius: 4,
-                    dataLabels: {
-                        position: 'center' 
-                    }
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                formatter: (val) => {
-                    // Tampilkan label teks di tengah bar
-                    return val === 1 ? 'RUSAK (1)' : 'TIDAK RUSAK (0)';
-                },
-                style: {
-                    // KITA GANTI WARNA TEKS MENJADI HITAM (#212121) AGAR KONTRAST DI ATAS BAR HIJAU CERAH.
-                    // Teks di atas bar MERAH mungkin akan sedikit kurang kontras, tapi ini 
-                    // adalah solusi paling aman tanpa rendering HTML yang gagal.
-                    colors: ['#212121'], 
-                    fontWeight: 600,
-                    fontSize: '13px'
-                },
-                dropShadow: {
-                    enabled: false, // Nonaktifkan Shadow agar teks tidak mengganggu
-                }
-            },
-            xaxis: {
-                categories: modelNames,
-                // PERBAIKAN STABIL: Mengubah rentang min/max agar bar nilai 0 terlihat
-                min: -0.1, 
-                max: 1.1, 
-                labels: { show: false }, 
-                axisBorder: { show: false },
-                axisTicks: { show: false }
-            },
-            yaxis: {
-                labels: { 
-                    style: { 
-                        fontSize: '13px',
-                        fontWeight: 500,
-                        colors: ['#212121'] 
-                    } 
-                }
-            },
-            // Warna bar tetap dinamis
-            colors: modelNames.map(name => getBarColor(name)),
-            legend: { show: false },
-            tooltip: {
-                y: {
-                    formatter: (val) => (val === 1 ? 'Rusak' : 'Tidak Rusak')
-                },
-                shared: false
-            },
-            grid: {
-                show: false, 
-            }
-        }),
-        [modelNames, predictions]
-    );
-
+    // Fungsi untuk mendapatkan warna teks dan background netral
+    const getStylesForLabel = (/* label */) => {
+        // Warna teks netral gelap
+        const color = '#212121'; 
+        // Warna latar netral sangat terang (abu-abu muda)
+        const backgroundColor = '#F5F5F5'; 
+        
+        return {
+            color: color,
+            backgroundColor: backgroundColor,
+            fontWeight: 700, 
+            padding: '8px 15px', // Padding lebih besar
+            borderRadius: '6px', // Sudut sedikit membulat
+            fontSize: '1.1rem', // Font size label lebih besar
+            textAlign: 'center',
+            minWidth: '150px' // Lebar minimum kotak label yang lebih besar
+        };
+    };
+    
+    // Logika Keputusan Akhir untuk Header
     const finalDecisionLabel = summary.final_decision === '1' ? 1 : 0;
     const title =
         finalDecisionLabel === 1 ? 'KEPUTUSAN AKHIR: RUSAK' : 'KEPUTUSAN AKHIR: TIDAK RUSAK';
     
-    const titleColor = finalDecisionLabel === 1 ? '#FF4560' : '#00E396';
+    // Warna judul diubah menjadi netral gelap (bukan lagi merah/hijau)
+    const titleColor = '#212121';
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}> 
-            {/* Header Chart */}
+            
+            {/* Header Keputusan Akhir */}
             <h3 
                 style={{ 
                     margin: 0, 
-                    fontSize: '1.5rem', 
-                    color: titleColor,
+                    fontSize: '1.8rem', // Font size judul lebih besar
+                    color: titleColor, // Menggunakan warna netral
                     fontWeight: 700,
                     textTransform: 'uppercase'
                 }}
             >
                 {title}
             </h3>
-            <p style={{ margin: '5px 0 15px 0', fontSize: '0.9rem', color: '#757575' }}>
+            <p style={{ margin: '5px 0 20px 0', fontSize: '1rem', color: '#757575' }}>
                 Keputusan Label Model Individu (0 = Tidak Rusak, 1 = Rusak)
             </p>
 
-            {/* Container Chart */}
-            <div style={{ flexGrow: 1, minHeight: '200px', height: 'calc(100% - 70px)' }}> 
-                <Chart 
-                    options={chartOptions} 
-                    series={series} 
-                    type="bar" 
-                    height="100%" 
-                />
+            {/* Container Daftar Keputusan */}
+            <div 
+                style={{ 
+                    flexGrow: 1, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '15px', // Jarak antar baris lebih lebar
+                    paddingTop: '10px'
+                }}
+            > 
+                {modelNames.map(name => {
+                    const labelText = getPredictionLabel(name);
+                    const labelStyles = getStylesForLabel(labelText);
+                    
+                    return (
+                        <div 
+                            key={name}
+                            style={{
+                                display: 'flex', // Menggunakan Flexbox untuk kontrol yang lebih mudah
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '12px 0', // Padding vertikal lebih besar
+                                borderBottom: '1px solid #EEEEEE' 
+                            }}
+                        >
+                            {/* Nama Model (Menggunakan proporsi lebar yang lebih baik) */}
+                            <span 
+                                style={{ 
+                                    fontWeight: 600, // Lebih tebal
+                                    color: '#212121', // Lebih gelap
+                                    fontSize: '1.1rem', // Font size nama model lebih besar
+                                    width: '40%', // Ambil 40% lebar kontainer
+                                    paddingLeft: '10px'
+                                }}
+                            >
+                                {name}
+                            </span>
+                            
+                            {/* Keputusan Label (Ambil sisa lebar) */}
+                            <div 
+                                style={{ 
+                                    display: 'flex', 
+                                    justifyContent: 'flex-start',
+                                    width: '60%', // Ambil 60% sisa lebar kontainer
+                                }}
+                            >
+                                <span style={labelStyles}>
+                                    {labelText}
+                                </span>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
