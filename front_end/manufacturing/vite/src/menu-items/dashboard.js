@@ -8,19 +8,9 @@ const icons = { IconForms, IconLayoutGrid, IconChartBar };
 
 const dashboard = {
     id: 'dashboard',
-    title: 'Dashboard',
+    title: 'Menu Items',
     type: 'group',
     children: [
-        // --- ITEM UNTUK DASHBOARD CHART PREDIKSI ---
-        {
-            id: 'dashboard-chart',
-            title: 'Prediction Chart',
-            type: 'item',
-            url: '/dashboard-chart',
-            icon: icons.IconChartBar,
-            breadcrumbs: true
-        },
-
         // --- ITEM UNTUK FORM INPUT ---
         {
             id: 'util-form-input',
